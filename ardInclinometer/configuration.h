@@ -11,7 +11,7 @@ const int serialSpeed = 9600;
 /*******************************
   Debugging
 *******************************/
-const boolean debug = false;
+const boolean debug = true;
 
 /*******************************
   Mire
@@ -27,15 +27,29 @@ const boolean debug = false;
 
 MPU6050 mpu6050(Wire); // start mpu instance
 
-double angleX; // holds the accumulated readings
-double angleY;
-double angleZ;
+double angleXAcc = 0; // holds the accumulated readings
+double angleYAcc = 0;
+double angleZAcc = 0;
 
-double oldAngleX; // holds the old values
-double oldAngleY;
-double oldAngleZ;
+double angleX = 0; // holds the averaged angles
+double angleY = 0;
+double angleZ = 0;
 
-const int values = 200; // how many values should be rerad and averaged
+double oldAngleX = 0; // holds the old values
+double oldAngleY = 0;
+double oldAngleZ = 0;
+
+double angleXLock = 0; // stores the locked angles
+double angleYLock = 0;
+double angleZLock = 0;
+
+boolean angleXLocked = false;
+boolean angleYLocked = false;
+boolean angleZLocked = false;
+boolean anglesLocked = false;
+
+double measureTime = 282; // for how long should values be read before averaged, ms
+int values = 0; // counting values read
 
 /*******************************
   OLED
@@ -50,6 +64,18 @@ const int values = 200; // how many values should be rerad and averaged
 SSD1306AsciiWire oled; // start oled instance
 
 /*******************************
+  FTDebouncer setup
+*******************************/
+const byte debounceTime = 15;
+
+#if !defined(nullptr)
+#define nullptr NULL
+#endif
+
+#include "FTDebouncer.h" // load library for debouncing buttons
+FTDebouncer pinDebouncer(debounceTime);
+
+/*******************************
   In- and outputs
 *******************************/
 int levelLED_neg1 = 9; // Level LEDs
@@ -61,7 +87,4 @@ int levelLED_pos1 = 13;
 /*******************************
   Misc
 *******************************/
-byte i;
-
 double startMillis;
-double endMillis;
