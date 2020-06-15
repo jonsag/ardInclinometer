@@ -88,3 +88,9 @@ int levelLED_pos1 = 13;
   Misc
 *******************************/
 double startMillis;
+
+String mess = ""; // holds the message
+String oldMess = "";
+
+double messMillis;
+const int messTime = 2000; // how long to show a message, ms

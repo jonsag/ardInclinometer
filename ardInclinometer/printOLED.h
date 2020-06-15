@@ -11,7 +11,7 @@ void printActualAng(byte posY, double ang, double angLock) {
   int angDevLength = angDevStr.length();
   angDevStr[angDevLength - 1] = '\0';
 
-  oled.setCursor(0, posY);
+  oled.setCursor(0, posY);  // print the deviation at the start of the line
 
   if (angDev >= 0) {
     oled.print(" ");
@@ -35,17 +35,17 @@ void printActualAng(byte posY, double ang, double angLock) {
   int angLength = angStr.length(); // strip the last decimal
   angStr[angLength - 1] = '\0';
 
-  oled.setCursor(80, posY);
+  oled.setCursor(75, posY + 1);  // print the real angle after the deviation
 
   if (ang >= 0) {
     oled.print(" ");
-    oled.setCursor(oled.col(), posY);
+    oled.setCursor(oled.col(), posY + 1);
   }
 
   oled.print(angStr);
 
   for (byte i = angStr.length(); i < 7; i++) {
-    oled.setCursor(oled.col(), posY);
+    oled.setCursor(oled.col(), posY + 1);
     oled.print(" ");
   }
   /*
@@ -62,46 +62,32 @@ void printActualAng(byte posY, double ang, double angLock) {
 
 }
 
-void printXLocked() {
+void printAxisLocked(String axis, boolean lock) {
+  oled.set2X();
+
+  if (axis == "X") {
+    oled.setCursor(116, 0);
+  } else if (axis == "Y") {
+    oled.setCursor(116, 2);
+  } else if (axis == "Z") {
+    oled.setCursor(116, 4);
+  }
+
+  if (lock) {
+    oled.print(axis);
+  } else {
+    oled.print(" ");
+  }
+}
+
+void printMess(String message) {
   oled.set2X();
 
   oled.setCursor(0, 6);
 
-  if (angleXLocked) {
-    oled.print("X");
+  if (message == "") {
+    oled.clearToEOL();
   } else {
-    oled.print(" ");
+    oled.print(message);
   }
-}
-
-void printYLocked() {
-  oled.set2X();
-
-  oled.setCursor(30, 6);
-
-  if (angleYLocked) {
-    oled.print("Y");
-  } else {
-    oled.print(" ");
-  }
-}
-
-void printZLocked() {
-  oled.set2X();
-
-  oled.setCursor(60, 6);
-
-  if (angleZLocked) {
-    oled.print("Z");
-  } else {
-    oled.print(" ");
-  }
-}
-
-void printMisc(byte posX, byte posY, double val) {
-  oled.set2X();
-
-  oled.setCursor(posX, posY);
-  //oled.print(val);
-  oled.print("0123456789012");
 }

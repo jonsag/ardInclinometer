@@ -7,7 +7,7 @@ void button1Action() {
 
     angleXLocked = false;
 
-    printXLocked();
+    mess = "X unlocked";
 
     if (debug) {
       Serial.println("Angle X unlocked");
@@ -18,7 +18,7 @@ void button1Action() {
 
     angleXLocked = true;
 
-    printXLocked();
+    mess = "X locked";
 
     if (debug) {
       Serial.println("Angle X locked");
@@ -27,6 +27,10 @@ void button1Action() {
       Serial.println();
     }
   }
+
+  printAxisLocked("X", angleXLocked);
+  
+  messMillis = millis();
 }
 
 /*******************************
@@ -38,7 +42,7 @@ void button2Action() {
 
     angleYLocked = false;
 
-    printYLocked();
+    mess = "Y unlocked";
 
     if (debug) {
       Serial.println("Angle Y unlocked");
@@ -49,8 +53,7 @@ void button2Action() {
 
     angleYLocked = true;
 
-    printYLocked();
-
+    mess = "Y locked";
     if (debug) {
       Serial.println("Angle Y locked");
       Serial.print("Y: ");
@@ -58,6 +61,10 @@ void button2Action() {
       Serial.println();
     }
   }
+
+  printAxisLocked("Y", angleYLocked);
+
+  messMillis = millis();
 }
 
 /*******************************
@@ -69,7 +76,7 @@ void button3Action() {
 
     angleZLocked = false;
 
-    printZLocked();
+    mess = "Z unlocked";
 
     if (debug) {
       Serial.println("Angle Z unlocked");
@@ -80,7 +87,7 @@ void button3Action() {
 
     angleZLocked = true;
 
-    printZLocked();
+    mess = "Z locked";
 
     if (debug) {
       Serial.println("Angle Z locked");
@@ -89,6 +96,10 @@ void button3Action() {
       Serial.println();
     }
   }
+
+  printAxisLocked("Z", angleZLocked);
+
+  messMillis = millis();
 }
 
 /*******************************
@@ -105,9 +116,7 @@ void button4Action() {
     angleZLocked = false;
     anglesLocked = false;
 
-    printXLocked();
-    printYLocked();
-    printZLocked();
+    mess = "All unlocked";
 
     if (debug) {
       Serial.println("All angles unlocked");
@@ -123,9 +132,7 @@ void button4Action() {
     angleZLocked = true;
     anglesLocked = true;
 
-    printXLocked();
-    printYLocked();
-    printZLocked();
+    mess = "All locked";
 
     if (debug) {
       Serial.println("Angle X locked");
@@ -138,6 +145,12 @@ void button4Action() {
       Serial.println();
     }
   }
+
+  printAxisLocked("X", angleXLocked);
+  printAxisLocked("Y", angleYLocked);
+  printAxisLocked("Z", angleZLocked);
+
+  messMillis = millis();
 }
 
 /*******************************

@@ -101,7 +101,7 @@ void setup() {
   pinDebouncer.addPin(4, LOW);
   pinDebouncer.addPin(5, LOW);
   pinDebouncer.addPin(6, LOW);
-  
+
   pinDebouncer.begin();
 
   oled.clear();
@@ -118,6 +118,9 @@ void loop() {
   pinDebouncer.update(); // reads and handles all buttons
 
   if (millis() - startMillis < measureTime) {
+    /*******************************
+        Measure angles
+    *******************************/
     values++;
 
     mpu6050.update(); // read values
@@ -126,6 +129,9 @@ void loop() {
     angleYAcc += mpu6050.getAngleY();
     angleZAcc += mpu6050.getAngleZ();
   } else {
+    /*******************************
+      Calculate angles
+    *******************************/
     angleX = round1dec(angleXAcc / values); // calculate averages and round
     angleY = round1dec(angleYAcc / values);
     angleZ = round1dec(angleZAcc / values);
@@ -154,10 +160,6 @@ void loop() {
     startMillis = millis();
   }
 
-
-
-
-
   if (false) {
     Serial.print("\tAngles, X: ");
     Serial.print(angleX);
@@ -172,7 +174,15 @@ void loop() {
     Serial.println();
   }
 
+  /*******************************
+    Messages
+  *******************************/
+  if (millis() - messMillis >= messTime) {
+    mess = "";
+  }
 
-
-  //printMisc(0, 6, values);
+  if (mess != oldMess) {
+    printMess(mess);
+    oldMess = mess;
+  }
 }
