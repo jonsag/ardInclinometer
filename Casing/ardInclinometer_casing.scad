@@ -9,7 +9,7 @@ casing = true;
 lid = true;
 
 // lsy out everything for printing
-print = true;
+print = false;
 
 // main body
 // width = X, depth = Z, height = Y
@@ -33,6 +33,15 @@ lidGap = 0.5; // gap between lid and casing
 lidScrewHoleDia = 3.5;
 lidScrewHeadDia = 6;
 lidScrewCountersink = 3;
+
+lidRecess = 3;
+
+// print text on lid
+textOnLid1 = "ardInclinometer";
+textOnLid2 = "by Jon Sagebrand";
+
+lidTextFont = "Liberation Sans:style=Bold Italic";
+lidFontSize = 6;
 
 // roundness
 $fn=100;
@@ -114,35 +123,50 @@ module screwPostHoles() {
 }
 
 module drawLid () {
-     difference() {
-          // draw the lid
-          cube([width - wallThickness * 2 - lidGap * 2, depth - wallThickness * 2 - lidGap * 2, lidThickness]);
+     union() {
+	  difference() {
+	       // draw the lid
+	       cube([width - wallThickness * 2 - lidGap * 2, depth - wallThickness * 2 - lidGap * 2, lidThickness]);
+	       
+	       // make screw holes
+	       translate([postDia / 2 - lidGap + postOffset, postDia / 2 - lidGap + postOffset, 0])
+		    cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
+	       
+	       translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, postDia / 2 - lidGap + postOffset, 0])
+		    cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
+	       
+	       translate([postDia / 2 - lidGap + postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, 0])
+		    cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
+	       
+	       translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, 0])
+		    cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
+	       
+	       // make screw countersinks
+	       translate([postDia / 2 - lidGap + postOffset, postDia / 2 - lidGap + postOffset, lidScrewCountersink])
+		    cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
+	       
+	       translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, postDia / 2 - lidGap + postOffset, lidScrewCountersink])
+		    cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
+	       
+	       translate([postDia / 2 - lidGap + postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, lidScrewCountersink])
+		    cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
+	       
+	       translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, lidScrewCountersink])
+		    cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
 
-          // make screw holes
-          translate([postDia / 2 - lidGap + postOffset, postDia / 2 - lidGap + postOffset, 0])
-               cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
+	       // make recess in lid
+	       translate([postDia, postDia, lidThickness - lidRecess])
+		    cube([width - wallThickness * 2 - lidGap * 2 - postDia * 2, depth - wallThickness * 2 - lidGap * 2 - postDia * 2, lidThickness]);
+	  }
 
-          translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, postDia / 2 - lidGap + postOffset, 0])
-               cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
+	  // print text in recess
+	  translate([(width - wallThickness * 2 - lidGap * 2) / 2, (depth - wallThickness * 2 - lidGap * 2) / 2 * 1.25, lidThickness - lidRecess])
+	       linear_extrude(height = lidRecess)
+	       text(textOnLid1, font = lidTextFont, size = lidFontSize, valign = "center", halign = "center");
 
-	  translate([postDia / 2 - lidGap + postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, 0])
-	       cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
-
-          translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, 0])
-	       cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
-
-	  // make screw countersinks
-	  translate([postDia / 2 - lidGap + postOffset, postDia / 2 - lidGap + postOffset, lidScrewCountersink])
-               cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
-
-          translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, postDia / 2 - lidGap + postOffset, lidScrewCountersink])
-	       cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
-	  
-          translate([postDia / 2 - lidGap + postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, lidScrewCountersink])
-	       cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
-	  
-          translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, lidScrewCountersink])
-	       cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
+          translate([(width - wallThickness * 2 - lidGap * 2) / 2, (depth - wallThickness * 2 - lidGap * 2) / 2 * 0.75, lidThickness - lidRecess])
+	       linear_extrude(height = lidRecess)
+	       text(textOnLid2, font = lidTextFont, size = lidFontSize, valign = "center", halign = "center");
      }
 }
 
