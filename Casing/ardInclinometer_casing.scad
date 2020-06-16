@@ -6,6 +6,10 @@
 
 // what should we draw:
 casing = true;
+lid = true;
+
+// lsy out everything for printing
+print = true;
 
 // main body
 // width = X, depth = Z, height = Y
@@ -15,76 +19,131 @@ height = 30;
 
 wallThickness = 3;
 
+// screw posts
+postDia = 10;
+postHoleDia = 2.5;
+postOffset = -1; // extra distance from walls to screw posts
+
 // lid
-lidThickness = 3;
+lidThickness = 5;
 lidRest = 3;
 
-// screw posts
-postDia = 6;
-postHoleDia = 2.5;
+lidGap = 0.5; // gap between lid and casing
+
+lidScrewHoleDia = 3.5;
+lidScrewHeadDia = 6;
+lidScrewCountersink = 3;
+
+// roundness
+$fn=100;
 
 // start drawing
 if (casing) {
-     union() {
-	  difference() {
-	       // draw the outer limits for the casing
-	       cube([width, depth, height]);
-
-	       // hollow out the casing
-	       translate([wallThickness, wallThickness, wallThickness])
-		    cube([width - 2 * wallThickness, depth - 2 * wallThickness, height]);
+     difference() {
+	  union() {
+	       difference() {
+		    // draw the outer limits for the casing
+		    cube([width, depth, height]);
+		    
+		    // hollow out the casing
+		    translate([wallThickness, wallThickness, wallThickness])
+			 cube([width - 2 * wallThickness, depth - 2 * wallThickness, height]);
+	       }
+	       
+	       lidRests(); // make the prisms where the lid is resting
+	       
+	       screwPosts(); // make the screwposts where to screw down the lid// screw posts
 	  }
+	  screwPostHoles();
      }
+}
 
-     // lid rests
+if (lid) {
+     if (print) {
+	  translate ([wallThickness + lidGap, depth + 10, 0])
+	       drawLid();
+     } else {
+	  translate ([wallThickness + lidGap, wallThickness + lidGap, height - lidThickness])
+	       drawLid();
+     }
+}
+
+module lidRests() {
      rotate([0, 0, 90])
-	  translate([wallThickness, -width, height - lidRest - lidThickness])
+          translate([wallThickness, -width, height - lidRest - lidThickness])
           prismFlatUp(width, lidRest, lidRest);
-
+     
      rotate([0, 0, -90])
-	  translate([-depth + wallThickness, 0, height - lidRest - lidThickness])
-     prismFlatUp(width, lidRest, lidRest);
+          translate([-depth + wallThickness, 0, height - lidRest - lidThickness])
+	  prismFlatUp(width, lidRest, lidRest);
      
      rotate([0, 0, 180])
-	  translate([-width + wallThickness, -depth, height - lidRest - lidThickness])
-     prismFlatUp(depth, lidRest, lidRest);
-
-     translate([wallThickness, 0, height - lidRest - lidThickness])
+          translate([-width + wallThickness, -depth, height - lidRest - lidThickness])
 	  prismFlatUp(depth, lidRest, lidRest);
-
-     // screw posts
-     union() {
-	  translate([wallThickness + postDia / 2, wallThickness + postDia / 2, wallThickness])
-	  difference() {
-	       cylinder(height - wallThickness - lidThickness, postDia / 2, postDia / 2);
-	       cylinder(height, postHoleDia / 2, postHoleDia / 2);
-	  }
-     }
-
-     union() {
-          translate([width - wallThickness - postDia / 2, wallThickness + postDia / 2, wallThickness])
-          difference() {
-               cylinder(height - wallThickness - lidThickness, postDia / 2, postDia / 2);
-               cylinder(height, postHoleDia / 2, postHoleDia / 2);
-          }
-     }
-
-     union() {
-          translate([width - wallThickness - postDia / 2, depth - wallThickness - postDia / 2,wallThickness])
-          difference() {
-               cylinder(height - wallThickness - lidThickness, postDia / 2, postDia / 2);
-               cylinder(height, postHoleDia / 2, postHoleDia / 2);
-          }
-     }
      
-     union() {
-          translate([wallThickness + postDia / 2, depth - wallThickness - postDia / 2, wallThickness])
-          difference() {
-               cylinder(height - wallThickness - lidThickness, postDia / 2, postDia / 2);
-               cylinder(height, postHoleDia / 2, postHoleDia / 2);
-          }
-     }
+     translate([wallThickness, 0, height - lidRest - lidThickness])
+          prismFlatUp(depth, lidRest, lidRest);
+}
 
+module screwPosts() {
+     translate([wallThickness + postDia / 2 + postOffset, wallThickness + postDia / 2 + postOffset, wallThickness])
+	  cylinder(height - wallThickness - lidThickness, postDia / 2, postDia / 2);
+     
+     translate([width - wallThickness - postDia / 2 - postOffset, wallThickness + postDia / 2 + postOffset, wallThickness])
+	  cylinder(height - wallThickness - lidThickness, postDia / 2, postDia / 2);
+     
+     translate([width - wallThickness - postDia / 2 - postOffset, depth - wallThickness - postDia / 2 - postOffset,wallThickness])
+	  cylinder(height - wallThickness - lidThickness, postDia / 2, postDia / 2);
+     
+     translate([wallThickness + postDia / 2 + postOffset, depth - wallThickness - postDia / 2 - postOffset, wallThickness])
+	  cylinder(height - wallThickness - lidThickness, postDia / 2, postDia / 2);
+}
+
+module screwPostHoles() { 
+     translate([wallThickness + postDia / 2 + postOffset, wallThickness + postDia / 2 + postOffset, wallThickness])
+	  cylinder(height, postHoleDia / 2, postHoleDia / 2);
+     
+     translate([width - wallThickness - postDia / 2 - postOffset, wallThickness + postDia / 2 + postOffset, wallThickness])
+	  cylinder(height, postHoleDia / 2, postHoleDia / 2);
+     
+     translate([width - wallThickness - postDia / 2 - postOffset, depth - wallThickness - postDia / 2 - postOffset,wallThickness])
+	  cylinder(height, postHoleDia / 2, postHoleDia / 2);
+     
+     translate([wallThickness + postDia / 2 + postOffset, depth - wallThickness - postDia / 2 - postOffset, wallThickness])
+	  cylinder(height, postHoleDia / 2, postHoleDia / 2);
+}
+
+module drawLid () {
+     difference() {
+          // draw the lid
+          cube([width - wallThickness * 2 - lidGap * 2, depth - wallThickness * 2 - lidGap * 2, lidThickness]);
+
+          // make screw holes
+          translate([postDia / 2 - lidGap + postOffset, postDia / 2 - lidGap + postOffset, 0])
+               cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
+
+          translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, postDia / 2 - lidGap + postOffset, 0])
+               cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
+
+	  translate([postDia / 2 - lidGap + postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, 0])
+	       cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
+
+          translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, 0])
+	       cylinder(lidThickness, lidScrewHoleDia / 2, lidScrewHoleDia / 2);
+
+	  // make screw countersinks
+	  translate([postDia / 2 - lidGap + postOffset, postDia / 2 - lidGap + postOffset, lidScrewCountersink])
+               cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
+
+          translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, postDia / 2 - lidGap + postOffset, lidScrewCountersink])
+	       cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
+	  
+          translate([postDia / 2 - lidGap + postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, lidScrewCountersink])
+	       cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
+	  
+          translate([width - wallThickness * 2 - postDia / 2 - lidGap - postOffset, depth - wallThickness * 2 - postDia / 2 - lidGap - postOffset, lidScrewCountersink])
+	       cylinder(lidThickness - lidScrewCountersink, lidScrewHeadDia / 2, lidScrewHeadDia / 2);
+     }
 }
 
 module prismFlatDown(l, w, h) {          // l = Y, w = X, h = Z
