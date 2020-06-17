@@ -6,8 +6,8 @@
 
 // what should we draw:
 casing = true;
-lid = true;
-gy521 = true; // this is just the board itself
+lid = false;
+gy521 = false; // this is just the board itself
      
 // lsy out everything for printing
 print = true;
@@ -15,14 +15,20 @@ print = true;
 // main body
 // width = X, depth = Z, height = Y
 width = 100;
-depth = 50;
-height = 30;
+depth = 80;
+height = 50;
 
 wallThickness = 3;
+
+// screen wedge
+wedgeHeight = 30;
 
 // screw posts
 postDia = 10;
 postHoleDia = 2.5;
+
+postHoleDepth = 10;
+
 postOffset = -1; // extra distance from walls to screw posts
 
 // lid
@@ -48,27 +54,36 @@ lidFontSize = 6;
 $fn=100;
 
 // start drawing
-if (casing) {
-     difference() {
-	  union() {
-	       difference() {
-		    // draw the outer limits for the casing
-		    cube([width, depth, height]);
+if (casing) { // create the main body
+     union() {
+	  difference() {
+	       union() {
+		    difference() {
+			 // draw the outer limits for the casing
+			 cube([width, depth, height]);
+			 
+			 // hollow out the casing
+			 translate([wallThickness, wallThickness, wallThickness])
+			      cube([width - 2 * wallThickness, depth - 2 * wallThickness, height]);
+			 
+		    }
+		    lidRests(); // make the prisms where the lid is resting
 		    
-		    // hollow out the casing
-		    translate([wallThickness, wallThickness, wallThickness])
-			 cube([width - 2 * wallThickness, depth - 2 * wallThickness, height]);
+		    screwPosts(); // make the screwposts where to screw down the lid// screw posts
 	       }
+	       screwPostHoles(); // make the holes in the screw posts
 	       
-	       lidRests(); // make the prisms where the lid is resting
-	       
-	       screwPosts(); // make the screwposts where to screw down the lid// screw posts
+	       wedgeCutOff(0); // cut off the wedge where the screen lies
 	  }
-	  screwPostHoles();
+     }
+     difference() {
+	  wedgeCutOff(0); // create the cutoff again
+
+	  wedgeCutOff(wallThickness); // move the wedge and cut off again
      }
 }
 
-if (lid) {
+if (lid) { // create the lid
      if (print) {
 	  translate ([wallThickness + lidGap, depth + 10, 0])
 	       drawLid();
@@ -85,7 +100,13 @@ if (gy521) {
      }
 }
 
-module lidRests() {
+module wedgeCutOff(offSet) { // cut off triangular shape from the main body
+     rotate([0, 0, -90])
+     translate([-depth - offSet, 0, 0])
+	  prismFlatDown(width, wedgeHeight, wedgeHeight);
+     }
+
+module lidRests() { // create the wedge rests for the lid
      rotate([0, 0, 90])
           translate([wallThickness, -width, height - lidRest - lidThickness])
           prismFlatUp(width, lidRest, lidRest);
@@ -102,7 +123,7 @@ module lidRests() {
           prismFlatUp(depth, lidRest, lidRest);
 }
 
-module screwPosts() {
+module screwPosts() { // create the screw posts
      translate([wallThickness + postDia / 2 + postOffset, wallThickness + postDia / 2 + postOffset, wallThickness])
 	  cylinder(height - wallThickness - lidThickness, postDia / 2, postDia / 2);
      
@@ -116,21 +137,21 @@ module screwPosts() {
 	  cylinder(height - wallThickness - lidThickness, postDia / 2, postDia / 2);
 }
 
-module screwPostHoles() { 
-     translate([wallThickness + postDia / 2 + postOffset, wallThickness + postDia / 2 + postOffset, wallThickness])
-	  cylinder(height, postHoleDia / 2, postHoleDia / 2);
+module screwPostHoles() { // drill the holes for the lid screws
+     translate([wallThickness + postDia / 2 + postOffset, wallThickness + postDia / 2 + postOffset, height - lidThickness - postHoleDepth])
+	  cylinder(postHoleDepth, postHoleDia / 2, postHoleDia / 2);
      
-     translate([width - wallThickness - postDia / 2 - postOffset, wallThickness + postDia / 2 + postOffset, wallThickness])
-	  cylinder(height, postHoleDia / 2, postHoleDia / 2);
+     translate([width - wallThickness - postDia / 2 - postOffset, wallThickness + postDia / 2 + postOffset, height - lidThickness - postHoleDepth])
+	  cylinder(postHoleDepth, postHoleDia / 2, postHoleDia / 2);
      
-     translate([width - wallThickness - postDia / 2 - postOffset, depth - wallThickness - postDia / 2 - postOffset,wallThickness])
-	  cylinder(height, postHoleDia / 2, postHoleDia / 2);
+     translate([width - wallThickness - postDia / 2 - postOffset, depth - wallThickness - postDia / 2 - postOffset,height - lidThickness - postHoleDepth])
+	  cylinder(postHoleDepth, postHoleDia / 2, postHoleDia / 2);
      
-     translate([wallThickness + postDia / 2 + postOffset, depth - wallThickness - postDia / 2 - postOffset, wallThickness])
-	  cylinder(height, postHoleDia / 2, postHoleDia / 2);
+     translate([wallThickness + postDia / 2 + postOffset, depth - wallThickness - postDia / 2 - postOffset, height - lidThickness - postHoleDepth])
+	  cylinder(postHoleDepth, postHoleDia / 2, postHoleDia / 2);
 }
 
-module drawLid () {
+module drawLid () { // create the lid
      union() {
 	  difference() {
 	       // draw the lid
