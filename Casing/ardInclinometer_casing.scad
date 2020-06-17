@@ -138,12 +138,34 @@ module screenCutOut() { // create the cut out for the screen and screen cover
 }
 
 module screenPosts () {
-     difference() {
-	  translate([120, 0, 0])
-	       cylinder([screenPostHeight, screenPostDia / 2, screenPostDia / 2]);
+     translate([width / 2, depth - wedgeHeight + wallThickness / 2, wedgeHeight / 2 ])
+	  rotate([45, 0, 0])
+	  difference() {
+	  union() {
+	       cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
+
+	       translate([screenPostHoriDist, 0, 0])
+		    cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
+
+	       translate([screenPostHoriDist, screenPostVertDist, 0])
+                    cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
+	       
+	       translate([0, screenPostVertDist, 0])
+		    cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
+	  }
 	  
-	  translate([120, 0, screenPostHeight - screenPostHoleDepth + 2])
-	       cylinder([screenPostHoleDepth, screenPostHoleDia / 2, screenPostHoleDia / 2]);
+	  union() {
+	       cylinder(screenPostHoleDepth, screenPostHoleDia / 2, screenPostHoleDia / 2);
+
+	       translate([screenPostHoriDist, 0, 0])
+		    cylinder(screenPostHoleDepth, screenPostHoleDia / 2, screenPostHoleDia / 2);
+	       
+	       translate([screenPostHoriDist, screenPostVertDist, 0])
+		    cylinder(screenPostHoleDepth, screenPostHoleDia / 2, screenPostHoleDia / 2);
+
+	       translate([0, screenPostVertDist, 0])
+		    cylinder(screenPostHoleDepth, screenPostHoleDia / 2, screenPostHoleDia / 2);
+	  }
      }
 }
 
