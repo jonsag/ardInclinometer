@@ -1,3 +1,4 @@
+
 // ardInclinometer_casing
 
 // Casing for the ardInclinometer project
@@ -22,6 +23,10 @@ wallThickness = 3;
 
 // screen wedge
 wedgeHeight = 30;
+
+// screen cut out
+screenWidth = 25;
+screenHeight = 27;
 
 // screw posts
 postDia = 10;
@@ -55,33 +60,36 @@ $fn=100;
 
 // start drawing
 if (casing) { // create the main body
-     union() {
-	  difference() {
-	       union() {
-		    difference() {
-			 // draw the outer limits for the casing
-			 cube([width, depth, height]);
+	  union() {
+	       difference() {
+		    union() {
+			 difference() {
+			      // draw the outer limits for the casing
+			      cube([width, depth, height]);
+			      
+			      // hollow out the casing
+			      translate([wallThickness, wallThickness, wallThickness])
+				   cube([width - 2 * wallThickness, depth - 2 * wallThickness, height]);
+			      
+			 }
+			 lidRests(); // make the prisms where the lid is resting
 			 
-			 // hollow out the casing
-			 translate([wallThickness, wallThickness, wallThickness])
-			      cube([width - 2 * wallThickness, depth - 2 * wallThickness, height]);
-			 
+			 screwPosts(); // make the screwposts where to screw down the lid// screw posts
 		    }
-		    lidRests(); // make the prisms where the lid is resting
+		    screwPostHoles(); // make the holes in the screw posts
 		    
-		    screwPosts(); // make the screwposts where to screw down the lid// screw posts
+		    wedgeCutOff(0); // cut off the wedge where the screen lies
 	       }
-	       screwPostHoles(); // make the holes in the screw posts
+	  }
+	  difference() {
+	       wedgeCutOff(0); // create the cutoff again
 	       
-	       wedgeCutOff(0); // cut off the wedge where the screen lies
+	       wedgeCutOff(wallThickness); // move the wedge and cut off again
+
+	       screenCutOut();
 	  }
      }
-     difference() {
-	  wedgeCutOff(0); // create the cutoff again
-
-	  wedgeCutOff(wallThickness); // move the wedge and cut off again
-     }
-}
+     //screenCutOut();
 
 if (lid) { // create the lid
      if (print) {
@@ -105,6 +113,18 @@ module wedgeCutOff(offSet) { // cut off triangular shape from the main body
      translate([-depth - offSet, 0, 0])
 	  prismFlatDown(width, wedgeHeight, wedgeHeight);
      }
+
+module screenCutOut() {
+     union() {
+	  translate([width / 2, depth - wedgeHeight / 2 + wallThickness / 2, wedgeHeight / 2])
+	       rotate([45, 0, 0])
+	       cube([screenWidth, screenHeight, wallThickness], center = true);
+
+	  translate([width / 2, depth - wedgeHeight / 2 + wallThickness / 2 - 1, wedgeHeight / 2])
+               rotate([45, 0, 0])
+               cube([screenWidth + 6, screenHeight + 6, wallThickness], center = true);
+     }
+}
 
 module lidRests() { // create the wedge rests for the lid
      rotate([0, 0, 90])
