@@ -19,4 +19,5 @@
 // image to bottom edge: 9
 // image to side edge: 1
 
+// header center to top edge: 1.5
 
