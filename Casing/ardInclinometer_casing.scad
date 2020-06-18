@@ -138,8 +138,9 @@ module screenCutOut() { // create the cut out for the screen and screen cover
 }
 
 module screenPosts () {
-     translate([width / 2, depth - wedgeHeight + wallThickness / 2, wedgeHeight / 2 ])
+     translate([width / 2, depth - wedgeHeight / 2 + screenPostHeight - wallThickness / 2, wedgeHeight / 2 ])
 	  rotate([45, 0, 0])
+	  translate([-screenPostHoriDist / 2, -screenPostVertDist / 2, screenPostHeight / 2])
 	  difference() {
 	  union() {
 	       cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
