@@ -10,7 +10,7 @@ casing = true;
 lid = false;
 gy521 = false; // this is just the board itself
      
-// lsy out everything for printing
+// lay out everything for printing
 print = true;
 
 // main body
@@ -21,25 +21,38 @@ height = 50;
 
 wallThickness = 3;
 
+// oversize factor
+overSizeFactor = 1.0001; // useful for when making holes, larger than 1
+
 // screen wedge
 wedgeHeight = 30;
 
-// screen cut out
-screenPostHoriDist = 23;
-screenPostVertDist = 25;
+// push buttons
+pushButtonHoleDia = 7;
 
-screenPostDia = 5;
-screenPostHeight = 5;
+pushButtonDist = 15;
+
+buttonsXPlaceFactor = 0.35; // a value between 0 and 1
+
+// screen cut out and screw posts
+screenPostHoriDist = 20;
+screenPostVertDist = 22;
+
+screenPostDia = 4;
+screenPostHeight = 3;
 
 screenPostHoleDia = 2.5;
-screenPostHoleDepth = 5;
+screenPostHoleDepth = 3;
 
-screenWidth = screenPostHoriDist - screenPostDia;
-screenHeight = screenPostVertDist - screenPostDia;
+screenWidth = 23;
+screenHeight = 11.5;
+screenOffset = 2.25;
 
-screenCoverOverSize = 6;
+screenCoverOverSize = 1;
 screenCoverRecess = 2;
 
+screenXPlaceFactor = 0.75; // a value between 0 and 1
+     
 // screw posts
 lidPostDia = 10;
 lidPostHoleDia = 2.5;
@@ -75,18 +88,18 @@ if (casing) { // create the main body
      union() { // union of drilled main body, screen wedge with cut out and screen screw posts
 	  difference() { // drill lid posts screw holes and cut off wedge for screen mount
 	       union() { // union of main body, lid rests and screw posts
-		    difference() { // hollow out the main body
-			 cube([width, depth, height]);
+		    difference() {
+			 cube([width, depth, height]); // create the main body
 			 
 			 // hollow out the casing
 			 translate([wallThickness, wallThickness, wallThickness])
 			      cube([width - 2 * wallThickness, depth - 2 * wallThickness, height]);			      
 		    }
-		    lidRests(); // make the prisms where the lid is resting
+		    lidRests(); // add the prisms where the lid is resting
 		    
-		    screwPosts(); // make the screwposts where to screw down the lid
+		    screwPosts(); // add the screwposts where to screw down the lid
 	       }
-	       screwPostHoles(); // make the holes in the screw posts
+	       screwPostHoles(); // drill the holes in the screw posts
 	       
 	       wedgeCutOff(0); // cut off the wedge where the screen lies
 	  }
@@ -94,11 +107,13 @@ if (casing) { // create the main body
 	  difference() {
 	       wedgeCutOff(0); // create the cutoff again, this time it's solid
 	       
-	       wedgeCutOff(wallThickness); // move the wedge and cut off again
+	       wedgeCutOff(wallThickness * sqrt(2)); // move the wedge and cut off again
 	       
 	       screenCutOut(); // cut out for the screen and screen cover
+
+	       pushButtonHoles(); // drill the holes for the pushbutton
 	  }
-	  screenPosts(); // create screw posts for the screen
+	  screenPosts(); // add screw posts for the screen
      }
 }
 
@@ -125,49 +140,66 @@ module wedgeCutOff(offSet) { // cut off triangular shape from the main body
 	  prismFlatDown(width, wedgeHeight, wedgeHeight);
      }
 
-module screenCutOut() { // create the cut out for the screen and screen cover
-     union() {
-	  translate([width / 2, depth - wedgeHeight / 2 + wallThickness / 2, wedgeHeight / 2])
-	       rotate([45, 0, 0])
-	       cube([screenWidth, screenHeight, wallThickness], center = true);
-
-	  translate([width / 2, depth - wedgeHeight / 2 + wallThickness / 2 - wallThickness  + screenCoverRecess, wedgeHeight / 2])
-               rotate([45, 0, 0])
-               cube([screenWidth + screenCoverOverSize, screenHeight + screenCoverOverSize, wallThickness], center = true);
+module screenCutOut() {
+     translate([width * screenXPlaceFactor, depth - wedgeHeight / 2 + wallThickness / 2 * sqrt(2) , wedgeHeight / 2])
+     rotate([45, 0, 0])
+	  translate([0, screenOffset, 0])
+	  union() {
+	  cube([screenWidth, screenHeight, wallThickness * overSizeFactor], center = true);
+	  
+	  translate([0, 0, (wallThickness - screenCoverRecess) / 2])
+	       cube([screenWidth + screenCoverOverSize, screenHeight + screenCoverOverSize, screenCoverRecess], center = true);
      }
 }
 
-module screenPosts () {
-     translate([width / 2, depth - wedgeHeight / 2 + screenPostHeight - wallThickness / 2, wedgeHeight / 2 ])
+module pushButtonHoles() {
+     translate([width * buttonsXPlaceFactor, depth - wedgeHeight / 2 + wallThickness / 2 * sqrt(2) , wedgeHeight / 2])
+          rotate([45, 0, 0])
+          union() {
+          for ( i = [-pushButtonDist : pushButtonDist : pushButtonDist] ){ // make the three buttons for X, Y and Z zero
+               translate([i, pushButtonDist / 2, 0])
+                    cylinder(wallThickness * overSizeFactor, pushButtonHoleDia / 2, pushButtonHoleDia / 2, center = true);
+          }
+	  
+          for ( i = [-pushButtonDist / 2: pushButtonDist : pushButtonDist / 2] ){ // make the three buttons for all zero and ... 
+               translate([i, -pushButtonDist / 2, 0])
+                    cylinder(wallThickness * overSizeFactor, pushButtonHoleDia / 2, pushButtonHoleDia / 2, center = true);
+          }
+     }
+}
+
+module screenPosts() {
+     translate([width * screenXPlaceFactor, depth - wedgeHeight / 2 + wallThickness / 2 * sqrt(2), wedgeHeight / 2])
 	  rotate([45, 0, 0])
-	  translate([-screenPostHoriDist / 2, -screenPostVertDist / 2, screenPostHeight / 2])
+	  translate([-screenPostHoriDist / 2, -screenPostVertDist / 2, -screenPostHeight / 2 + wallThickness])
 	  difference() {
-	  union() {
-	       cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
-
+          union() {
+               cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
+	       
 	       translate([screenPostHoriDist, 0, 0])
-		    cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
-
-	       translate([screenPostHoriDist, screenPostVertDist, 0])
                     cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
 	       
-	       translate([0, screenPostVertDist, 0])
-		    cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
-	  }
-	  
+               translate([screenPostHoriDist, screenPostVertDist, 0])
+                    cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
+	       
+               translate([0, screenPostVertDist, 0])
+                    cylinder(screenPostHeight, screenPostDia / 2, screenPostDia / 2);
+          }
+
+	  translate([0, 0, screenPostHeight - screenPostHoleDepth])
 	  union() {
 	       cylinder(screenPostHoleDepth, screenPostHoleDia / 2, screenPostHoleDia / 2);
-
+	       
 	       translate([screenPostHoriDist, 0, 0])
 		    cylinder(screenPostHoleDepth, screenPostHoleDia / 2, screenPostHoleDia / 2);
 	       
 	       translate([screenPostHoriDist, screenPostVertDist, 0])
 		    cylinder(screenPostHoleDepth, screenPostHoleDia / 2, screenPostHoleDia / 2);
-
+	       
 	       translate([0, screenPostVertDist, 0])
 		    cylinder(screenPostHoleDepth, screenPostHoleDia / 2, screenPostHoleDia / 2);
 	  }
-     }
+     }    
 }
 
 module lidRests() { // create the wedge rests for the lid
