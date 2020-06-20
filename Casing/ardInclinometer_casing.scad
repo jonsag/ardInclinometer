@@ -8,22 +8,27 @@
 // what should we draw:
 casing = true;
 lid = false;
-gy521 = true; // this is just the board itself
 oled = true; // the screen
+
+disableAdjustmentHoles =true;
 
 // lay out everything for printing
 print = false;
 
 // main body
 // width = X, depth = Z, height = Y
-width = 100;
-depth = 80;
-height = 50;
+width = 120;
+depth = 56;
+height = 36;
 
 wallThickness = 3;
 
 // oversize factor
 overSizeFactor = 1.0001; // useful for when making holes, larger than 1
+
+// battery compartment
+batteryHeight = 40;
+batteryWidth = 20;
 
 // screen wedge
 wedgeHeight = 30;
@@ -62,9 +67,6 @@ lidPostHoleDepth = 10;
 
 lidPostOffset = -1; // extra distance from walls to screw posts
 
-// mpu mount
-
-
 // lid
 lidThickness = 5;
 lidRest = 3;
@@ -83,6 +85,44 @@ textOnLid2 = "by Jon Sagebrand";
 
 lidTextFont = "Liberation Sans:style=Bold Italic";
 lidFontSize = 6;
+
+// mpu6050
+include <mpu_mount.scad>;
+
+mount1 = true;
+mount2 = true;
+
+gy521 = true;
+
+adjustmentHoleDia = 5;
+
+//mpu6050_mount();
+if (!print) {
+     translate([mount1Width / 2 + wallThickness + lidPostDia + lidPostOffset, -(-swivelWidth - mount1Height) * 2 + wallThickness * 1.5 + lidPostDia + lidPostOffset, mount3Depth / 2 + mount3ExtraDepth + wallThickness])
+	  rotate([-90, 0, 0])
+	  union() {
+	  if (mount1) {
+	       mount1();
+	  }
+	  if (mount2) {
+	       translate([0, 0, -swivelWidth - mount1Height])
+		    mount2();
+	  }
+	  if (gy521) {
+	       translate([-10.5, -7.8, mount1Height / 2 - 1.2])
+		    mpu6050_gy521();
+	  }
+     }
+} else {
+     if (mount1) {
+	  translate([width + mount1Width / 2 + 2, mount1Depth / 2, mount1Height / 2 + swivelWidth])
+	       mount1();
+     }
+     if (mount2) {
+	  translate([width + mount2Width/ 2 + 2, mount1Depth / 2 + mount2Depth + 2, mount2Height / 2 + swivelWidth])
+	       mount2();
+     }
+}
 
 // roundness
 $fn=100;
@@ -116,25 +156,26 @@ if (casing) { // create the main body
 	       screenCutOut(); // cut out for the screen and screen cover
 
 	       pushButtonHoles(); // drill the holes for the pushbutton
+
+	       if (!disableAdjustmentHoles) {
+		    adjustmentHoles(); // drill the holes where to insert an adjustment tool
+	       }
 	  }
 	  screenPosts(); // add screw posts for the screen
+
+	  add_mount3(); // add mount for the mpu
+
+	  batteryCompartment(); // add battercompartment
      }
 }
 
 if (lid) { // create the lid
      if (print) {
-	  translate ([wallThickness + lidGap, depth + 10, 0])
+	  translate ([wallThickness + lidGap, depth + 2, 0])
 	       drawLid();
      } else {
 	  translate ([wallThickness + lidGap, wallThickness + lidGap, height - lidThickness])
 	       drawLid();
-     }
-}
-
-if (gy521) {
-     if (!print) {
-	  translate([120, 0, 0])
-	  mpu6050_gy521();
      }
 }
 
@@ -174,7 +215,7 @@ module pushButtonHoles() {
                     cylinder(wallThickness * overSizeFactor, pushButtonHoleDia / 2, pushButtonHoleDia / 2, center = true);
           }
 	  
-          for ( i = [-pushButtonDist / 2: pushButtonDist : pushButtonDist / 2] ){ // make the three buttons for all zero and ... 
+          for ( i = [-pushButtonDist: pushButtonDist : 0] ){ // make the two buttons for all zero and ... 
                translate([i, -pushButtonDist / 2, 0])
                     cylinder(wallThickness * overSizeFactor, pushButtonHoleDia / 2, pushButtonHoleDia / 2, center = true);
           }
@@ -308,6 +349,45 @@ module drawLid () { // create the lid
      }
 }
 
+module add_mount3() {
+     union() {
+	  translate([mount1Width / 2 + wallThickness + lidPostDia + lidPostOffset, -(-swivelWidth - mount1Height) * 2 + wallThickness * 1.5 + lidPostDia + lidPostOffset, mount3Depth / 2 + mount3ExtraDepth + wallThickness])
+	       rotate([-90, 0, 0])
+	       translate([0, 0, (-swivelWidth - mount1Height) * 2])
+	       mount3();
+	  
+	  translate([wallThickness + lidPostDia + lidPostOffset, 0, 0]) // supports
+	       cube([3, wallThickness + lidPostDia + lidPostOffset, mount3Depth + mount3ExtraDepth + wallThickness]);
+	  translate([wallThickness + lidPostDia + lidPostOffset + mount3Width - 3, 0, 0])
+	       cube([3, wallThickness + lidPostDia + lidPostOffset, mount3Depth + mount3ExtraDepth + wallThickness]);
+	  
+     }
+}
+
+module adjustmentHoles() {
+     translate([mount1Width - springHoleDia / 2 - 2 + wallThickness + lidPostDia + lidPostOffset, depth - wedgeHeight / 2, wallThickness + mount3ExtraDepth + mount3Depth / 2]) // X adjust
+	  rotate([90, 0, 0])
+	  cylinder(wedgeHeight, adjustmentHoleDia / 2, adjustmentHoleDia / 2, center = true);
+
+     translate([mount1Width / 2 + wallThickness + lidPostDia + lidPostOffset, depth - wedgeHeight / 2, wallThickness + springHoleDia / 2 + 2]) // X adjust
+          rotate([90, 0, 0])
+          cylinder(wedgeHeight, adjustmentHoleDia / 2, adjustmentHoleDia / 2, center = true);
+}
+
+module batteryCompartment() {
+     //translate([width - batteryHeight - wallThickness * 2, lidPostDia + lidPostOffset + wallThickness, 0])
+     translate([width - batteryHeight - wallThickness * 2 - lidPostDia + lidPostOffset, lidRest, 0])
+	  difference() {
+	  cube([batteryHeight + wallThickness * 2, batteryWidth + wallThickness * 2, height - lidThickness]);
+	  
+	  translate([wallThickness, wallThickness, wallThickness]) // hollow out the compartment
+	       cube([batteryHeight, batteryWidth, height - lidRecess - wallThickness]);
+	  
+	  translate([0, (batteryWidth + wallThickness * 2) / 2, height - lidThickness - 3]) // make a cutout for the wires
+	       cube([wallThickness, 3, 3]);
+     }
+}
+
 module prismFlatDown(l, w, h) {          // l = Y, w = X, h = Z
      polyhedron(points=[
 		     [0,0,h],            // 0    front top corner
@@ -338,28 +418,6 @@ module prismFlatUp(l, w, h) {            // l = Y, w = X, h = Z
                      [1,2,5,4],  // w face
                      [0,3,5,2],  // hypotenuse face
                      ]);
-}
-
-module mpu6050_gy521() {
-     include <misc_parts.scad>;
-     
-     x = 21; y = 15.6; z = 1.2;
-     color([30/255, 114/255, 198/255])
-	  linear_extrude(height=z) {
-	  difference() {
-	       square(size = [x, y]);
-	       translate([3, y-3]) circle(r=1.5, center=true, $fn=24);
-	       translate([x-3, y-3]) circle(r=1.5, center=true, $fn=24);
-	  }
-     } 
-     translate([8.3, 5.6, z])
-	  color([60/255, 60/255, 60/255])
-	  cube(size=[4.0, 4.0, 0.9]);
-     //translate([0.34, 2.54, 0]) rotate(a=180, v=[1, 0, 0]) pin_headers(8, 1);
-     translate([0.34, 2.54, 0])
-	  rotate(a=180, v=[1, 0, 0])
-	  //pin_right_angle_low(8, 1);
-	  pin_headers(8, 1);
 }
 
 module GM009605v4() {

@@ -1,4 +1,4 @@
-// what to show
+/*// what to show
 mount1 = true;
 mount2 = true;
 mount3 = true;
@@ -6,7 +6,8 @@ mount3 = true;
 gy521 = true;
 
 // print?
-print = true;
+print = false;
+*/
 
 // mpu mount
 springHeight = 10;
@@ -47,33 +48,44 @@ swivelScrewDia = 3;
 // roundness
 $fn=100;
 
-if (mount1) {
-     if (print) {
-	  translate([0, 0, mount2Height / 2 + swivelWidth])
+//mpu6050_mount();
+
+module mpu6050_mount() {
+     if (mount1) {
+	  if (print) {
+	       translate([0, 0, mount2Height / 2 + swivelWidth])
+		    mount1();
+	  } else {
 	       mount1();
-     } else {
-	  mount1();
+	  }
      }
-}
-
-if (mount2) {
-     if (print) {
-          translate([mount1Width * 1.1, 0, mount2Height / 2 + swivelWidth])
-               mount2();
-        } else {
-	  translate([0, 0, -swivelWidth - mount1Height])
-	       mount2();
+     
+     if (mount2) {
+	  if (print) {
+	       translate([mount1Width * 1.1, 0, mount2Height / 2 + swivelWidth])
+		    mount2();
+	  } else {
+	       translate([0, 0, -swivelWidth - mount1Height])
+		    mount2();
           }
-}
-
-if (mount3) {
-     if (print) {
-          translate([0, mount1Depth * 1.1, mount3Height / 2])
-               mount3();
-        } else {
-          translate([0, 0, (-swivelWidth - mount1Height) * 2])
-               mount3();
+     }
+     
+     if (mount3) {
+	  if (print) {
+	       translate([0, mount1Depth * 1.1, mount3Height / 2])
+		    mount3();
+	  } else {
+	       translate([0, 0, (-swivelWidth - mount1Height) * 2])
+		    mount3();
           }
+     }
+     
+     if (gy521) {
+	  if (!print) {
+	       translate([-10.5, -7.8, mount1Height / 2 - 1.2])
+		    mpu6050_gy521();
+	  }
+     }
 }
 
 module mount1() {
@@ -215,13 +227,6 @@ module mount3() {
                          rotate([0, 90, 0])
                          cylinder(mount3Width / 2, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
 	  }
-     }
-}
-
-if (gy521) {
-     if (!print) {
-	  translate([-10.5, -7.8, mount1Height / 2 - 1.2])
-	       mpu6050_gy521();
      }
 }
 
