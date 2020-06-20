@@ -8,10 +8,11 @@
 // what should we draw:
 casing = true;
 lid = false;
-gy521 = false; // this is just the board itself
-     
+gy521 = true; // this is just the board itself
+oled = true; // the screen
+
 // lay out everything for printing
-print = true;
+print = false;
 
 // main body
 // width = X, depth = Z, height = Y
@@ -53,13 +54,16 @@ screenCoverRecess = 2;
 
 screenXPlaceFactor = 0.75; // a value between 0 and 1
      
-// screw posts
+// lid screw posts
 lidPostDia = 10;
 lidPostHoleDia = 2.5;
 
 lidPostHoleDepth = 10;
 
 lidPostOffset = -1; // extra distance from walls to screw posts
+
+// mpu mount
+
 
 // lid
 lidThickness = 5;
@@ -131,6 +135,15 @@ if (gy521) {
      if (!print) {
 	  translate([120, 0, 0])
 	  mpu6050_gy521();
+     }
+}
+
+if (oled) {
+     if (!print) {
+	  translate([width * screenXPlaceFactor, depth - wedgeHeight / 2 - 1, wedgeHeight / 2 + 3]) // this placement is just an estimation, not critical
+	       rotate([-45, 180, 0])
+	       translate([-12.5, -13.5, -1.6])
+	       GM009605v4();
      }
 }
 
@@ -347,4 +360,44 @@ module mpu6050_gy521() {
 	  rotate(a=180, v=[1, 0, 0])
 	  //pin_right_angle_low(8, 1);
 	  pin_headers(8, 1);
+}
+
+module GM009605v4() {
+     include <misc_parts.scad>;
+
+     x = 25; y = 27; z = 1.2; // pcb
+     color([30/255, 114/255, 198/255])
+          linear_extrude(height=z) {
+          difference() {
+	       square(size = [x, y]);
+	       translate([2.5, 2.5])
+	            circle(r=1.5, $fn=24);
+	       translate([x-2.5, 2.5])
+	            circle(r=1.5, $fn=24);
+	       translate([2.5, y-2.5])
+		    circle(r=1.5, $fn=24);
+	       translate([x-2.5, y-2.5])
+		    circle(r=1.5, $fn=24);
+          }
+     }
+
+     gx=25; gy=16.5; gz=2;
+     sx=23; sy=9.5; sz=2;
+
+     color("gray")
+     difference() {
+	  translate([x/2-gx/2, y/2-gy/2, z])
+	       cube(size=[gx, gy, gz]);
+	  
+	  translate([x/2-gx/2+(gx-sx)/2, y-6.5-sy, z])
+	       cube(size=[sx, sy, sz]);
+     }
+
+     translate([x/2-gx/2+(gx-sx)/2, y-6.5-sy, z])
+          color("black")
+          cube(size=[sx, sy, gz]);
+	  
+     translate([x/2-2.54*2, y-1.5, 0]) // headers
+          rotate(a=180, v=[1, 0, 0])
+          pin_headers(4, 1);
 }
