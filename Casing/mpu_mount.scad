@@ -6,21 +6,29 @@ mount3 = true;
 gy521 = true;
 
 // print?
-print = false;
+print = true;
 */
+// oversize hole depths
+overSize = 1.1;
 
+// nut for X, Y adjustments screwes
+nutDia = 6;
+nutHeight = 2.3;
+     
 // mpu mount
 springHeight = 10;
-springHoleDia = 5;
+springHoleDia = 7;
 
 springRecess = 1;
 
 adjScrewDia = 3;
 
+adjScrewEdgeDist = 1;
+
 // mount1, the one closest to the pcb, adjusts Z
 mount1Width = 35;
 mount1Depth = 17.6;
-mount1Height = 3;
+mount1Height = 6;
 
 pcbHoleDia = 2.5;
 
@@ -100,15 +108,15 @@ module mount1() {
 		    cube([20, pinHeaderCutOut, mount1Height], center = true);
 	       
 	       translate([-21 / 2 + 3, 15.6 / 2 -3, 0]) // pcb mounting holes
-		    cylinder(mount1Height, pcbHoleDia / 2, pcbHoleDia / 2, center = true);
+		    cylinder(mount1Height * overSize, pcbHoleDia / 2, pcbHoleDia / 2, center = true);
 	       translate([21 / 2 - 3, 15.6 / 2 -3, 0])
-		    cylinder(mount1Height, pcbHoleDia / 2, pcbHoleDia / 2, center = true);
+		    cylinder(mount1Height  * overSize, pcbHoleDia / 2, pcbHoleDia / 2, center = true);
 	       
-	       translate([mount1Width / 2 - springHoleDia / 2 - 2, 0, 0]) // hole for X adjusment screw
-		    cylinder(mount1Height, (swivelScrewDia + 0.5) / 2, (pcbHoleDia + 0.5) / 2, center = true);
+	       translate([mount1Width / 2 - springHoleDia / 2 - adjScrewEdgeDist, 0, 0]) // hole for X adjusment screw
+		    cylinder(mount1Height * overSize, (swivelScrewDia + 0.5) / 2, (pcbHoleDia + 0.5) / 2, center = true);
 	       
-	       translate([mount1Width / 2 - springHoleDia / 2 - 2, 0, -mount1Height / 2 + springRecess / 2]) // spring recess hole
-		    cylinder(springRecess, springHoleDia / 2, springHoleDia / 2, center = true);
+	       translate([mount1Width / 2 - springHoleDia / 2 - adjScrewEdgeDist, 0, -mount1Height / 2 + springRecess / 2]) // spring recess hole
+		    cylinder(springRecess * overSize, springHoleDia / 2, springHoleDia / 2, center = true);
 	  }
 	  difference() {
 	       union() {
@@ -125,10 +133,10 @@ module mount1() {
 	       
 	       translate([-mount1Width / 2 + swivelWidth / 2, -mount1Depth / 2, -swivelWidth / 2 - mount1Height / 2]) // swivel screw hole
 		    rotate([90, 0, 0])
-		    cylinder(mount1Depth, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
+		    cylinder(mount1Depth * overSize, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
 	       translate([-mount1Width / 2 + swivelWidth / 2, mount1Depth / 2, -swivelWidth / 2 - mount1Height / 2]) // swivel screw hole
 		    rotate([90, 0, 0])
-		    cylinder(mount1Depth, (swivelScrewDia - 0.5) / 2, (swivelScrewDia - 0.5) / 2, center = true);
+		    cylinder(mount1Depth * overSize, (swivelScrewDia - 0.5) / 2, (swivelScrewDia - 0.5) / 2, center = true);
 	  }
      }
 }
@@ -145,17 +153,19 @@ module mount2() {
 	       translate([0, -mount2Depth / 2 + 2.5, 0]) // pin header cut out            
 		    cube([20, pinHeaderCutOut, mount2Height], center = true);
 	       
-	       translate([mount1Width / 2 - springHoleDia / 2 - 2, 0, 0]) // hole for X adjusmentscrew
-		    cylinder(mount2Height, (swivelScrewDia - 0.5) / 2, (swivelScrewDia - 0.5) / 2, center = true);
+	       translate([mount1Width / 2 - springHoleDia / 2 - adjScrewEdgeDist, 0, 0]) // hole for X adjusmentscrew
+		    cylinder(mount2Height * overSize, (swivelScrewDia - 0.5) / 2, (swivelScrewDia - 0.5) / 2, center = true);
 
-               translate([mount1Width / 2 - springHoleDia / 2 - 2, 0, mount2Height / 2 - springRecess / 2]) // spring recess hole, X-axis
-                    cylinder(springRecess, springHoleDia / 2, springHoleDia / 2, center = true);
+               translate([mount1Width / 2 - springHoleDia / 2 - adjScrewEdgeDist, 0, mount2Height / 2 - springRecess / 2]) // spring recess hole, X-axis
+                    cylinder(springRecess * overSize, springHoleDia / 2, springHoleDia / 2, center = true);
+	       translate([mount1Width / 2 - springHoleDia / 2 - adjScrewEdgeDist, 0, -mount2Height / 2 + nutHeight / 2]) // nut for X adjustment screw
+	       cylinder(nutHeight * overSize, nutDia / 2, nutDia / 2, $fn = 6, center = true);
 
-	       translate([0, mount2Depth / 2 + mount2ExtraDepth - springHoleDia / 2 - 2, 0]) // hole for Y adjusmentscrew
-                    cylinder(mount1Height, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
+	       translate([0, mount2Depth / 2 + mount2ExtraDepth - springHoleDia / 2 - adjScrewEdgeDist, 0]) // hole for Y adjusmentscrew
+                    cylinder(mount1Height * overSize, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
 
-               translate([0, mount2Depth / 2 + mount2ExtraDepth - springHoleDia / 2 - 2, -mount1Height / 2 + springRecess / 2]) // spring recess hole, Y-axis
-                    cylinder(springRecess, springHoleDia / 2, springHoleDia / 2, center = true );
+               translate([0, mount2Depth / 2 + mount2ExtraDepth - springHoleDia / 2 - adjScrewEdgeDist, -mount1Height / 2 + springRecess / 2]) // spring recess hole, Y-axis
+                    cylinder(springRecess * overSize, springHoleDia / 2, springHoleDia / 2, center = true );
 	       
 	  }
 	  
@@ -166,11 +176,11 @@ module mount2() {
 
 		    translate([-mount2Width / 2 + swivelWidth / 2, 0, swivelWidth / 2 + mount2Height / 2]) // swivel point 
                          rotate([90, 0, 0])
-                         cylinder(mount2Depth / 2, swivelWidth / 2, swivelWidth / 2, center = true);
+                         cylinder(mount1Depth / 2, swivelWidth / 2, swivelWidth / 2, center = true);
 	       }
 	       translate([-mount2Width / 2 + swivelWidth / 2, 0, swivelWidth /2 + mount2Height / 2]) // swivel screw hole                   
                     rotate([90, 0, 0])
-                    cylinder(mount2Depth, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
+                    cylinder(mount2Depth / 2 * overSize, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
 	  }
 	  difference() {
                union() { // swivel to Y adjustemen
@@ -182,17 +192,17 @@ module mount2() {
 			 cylinder(mount2Width, swivelWidth / 2, swivelWidth / 2, center = true);
 	       }
 	       
-	       translate([0, -mount2Depth / 2 + swivelWidth / 2, -swivelWidth / 2 - mount1Height / 2]) // make center cutour of swivel
+	       translate([0, -mount2Depth / 2 + swivelWidth / 2, -swivelWidth / 2 - mount1Height / 2]) // make center cutout of swivel
 		    
 		    cube([mount2Width / 2 + 0.5, swivelWidth, swivelWidth], center = true);
 
 	       translate([mount2Width / 2, -mount2Depth / 2 + swivelWidth / 2, -swivelWidth / 2 - mount2Height / 2])
                          rotate([0, 90, 0])
-                         cylinder(mount2Width, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
+                         cylinder(mount2Width * overSize, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
 
 	       translate([-mount2Width / 2, -mount2Depth / 2 + swivelWidth / 2, -swivelWidth / 2 - mount2Height / 2])
                          rotate([0, 90, 0])
-                         cylinder(mount2Width, (swivelScrewDia - 0.5) / 2, (swivelScrewDia - 0.5) / 2, center = true);
+                         cylinder(mount2Width * overSize, (swivelScrewDia - 0.5) / 2, (swivelScrewDia - 0.5) / 2, center = true);
 
 	  }
      }
@@ -208,11 +218,14 @@ module mount3() {
 			 
 			 cube([mount2Width, mount2ExtraDepth, mount2Height], center = true);
                }
-               translate([0, mount2Depth / 2 + mount2ExtraDepth - springHoleDia / 2 - 2, 0]) // hole for Y adjustment screw
-                    cylinder(mount2Height, (swivelScrewDia - 0.5) / 2, (swivelScrewDia - 0.5) / 2, center = true);
+               translate([0, mount2Depth / 2 + mount2ExtraDepth - springHoleDia / 2 - adjScrewEdgeDist, 0]) // hole for Y adjustment screw
+                    cylinder(mount2Height * overSize, (swivelScrewDia - 0.5) / 2, (swivelScrewDia - 0.5) / 2, center = true);
 	       
-               translate([0, mount2Depth / 2 + mount2ExtraDepth - springHoleDia / 2 - 2, mount2Height / 2 - springRecess / 2]) // spring recess hole, Y-axis
-                    cylinder(springRecess, springHoleDia / 2, springHoleDia / 2, center = true);
+               translate([0, mount2Depth / 2 + mount2ExtraDepth - springHoleDia / 2 - adjScrewEdgeDist, mount2Height / 2 - springRecess / 2]) // spring recess hole, Y-axis
+                    cylinder(springRecess * overSize, springHoleDia / 2, springHoleDia / 2, center = true);
+
+	       translate([0, mount2Depth / 2 + mount2ExtraDepth - springHoleDia / 2 - adjScrewEdgeDist, -mount2Height / 2 + nutHeight / 2]) // nut for Y adjustment recess
+		    cylinder(nutHeight * overSize, nutDia / 2, nutDia / 2, $fn = 6, center = true);
 	  }
 	  difference() {
 	       union() {
@@ -225,7 +238,7 @@ module mount3() {
 	       }
 	       translate([0, -mount3Depth / 2 + swivelWidth / 2, +swivelWidth / 2 + mount3Height / 2])
                          rotate([0, 90, 0])
-                         cylinder(mount3Width / 2, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
+                         cylinder(mount3Width, (swivelScrewDia + 0.5) / 2, (swivelScrewDia + 0.5) / 2, center = true);
 	  }
      }
 }

@@ -9,24 +9,25 @@
 casing = true;
 lid = false;
 
-mount1 = true;
-mount2 = true;
+mount1 = false;
+mount2 = false;
+mount3 = false;
 
 disableAdjustmentHoles = false;
 
 // lay out everything for printing
-print = false;
+print = true;
 
 // main body
 // width = X, depth = Z, height = Y
-width = 120;
-depth = 110;
+width = 125;
+depth = 115;
 height = 45;
 
 wallThickness = 3;
 
 // oversize factor
-overSizeFactor = 1.1; // useful for when making holes, larger than 1
+overSizeFactor = 1.05; // useful for when making holes, larger than 1
 
 // battery compartment
 batteryHeight = 55;
@@ -43,9 +44,26 @@ pushButtonHoleDia = 7;
 pushButtonDist = 15;
 
 buttonsXPlaceFactor = 0.295; // a value between 0 and 1
+buttonsYPlaceFactor = 0.35;
 
 // power switch
 include <power_switch.scad>
+
+totalWidth = 20;
+holeWidth = 10.5;
+holeDepth = 7;
+screwHoleWidth = 15;
+screwHoleDia = 2;
+knobHoleWidth = 6;
+knobDepth = 3;
+knobWidth = 3;
+knobHeight = 5;
+mountPlateHeight = 0.5;
+bodyHeight = 5;
+legWidth = 1.5;
+legDepth = 0.5;
+legLength = 3;
+legSpacing = 2.54;
 
 // LEDs
 include <led.scad>
@@ -54,7 +72,8 @@ ledDia = 5;
 
 ledDist = 7; // distance between the leds
 
-ledsXPlaceFactor = 0.475;
+ledsXPlaceFactor = 0.355;
+ledsYPlaceFactor = 1.5;
 
 // screen cut out and screw posts
 screenPostHoriDist = 20;
@@ -103,7 +122,7 @@ lidTextFont = "Liberation Sans:style=Bold Italic";
 lidFontSize = 6;
 
 // mpu6050
-include <mpu_mount.scad>;
+include <mpu_mount-2.0.scad>;
 
 adjustmentHoleDia = 3;
 
@@ -118,11 +137,15 @@ pcbMountPostDia = 6;
 
 pcbMountScrewDia = 3;
 
-// power switch
+// uno
+include <Arduino.scad>
+
+unoPostHeight = 5;
+unoPostDia = 6;
 
 //mpu6050_mount();
 if (!print) {
-     translate([mount1Width / 2 + wallThickness + lidPostDia + lidPostOffset, -(-swivelWidth - mount1Height) * 2 + wallThickness * 1.5 + lidPostDia + lidPostOffset, mount3Depth / 2 + mount3ExtraDepth + wallThickness])
+     translate([mount1Width / 2 + wallThickness + lidPostDia + lidPostOffset, (mount1Height  + swivelWidth) * 3 + wallThickness - swivelWidth, mount3Depth / 2 + mount3ExtraDepth + wallThickness])
 	  rotate([-90, 0, 0])
 	  union() {
 	  if (mount1) {
@@ -132,8 +155,12 @@ if (!print) {
 	       translate([0, 0, -swivelWidth - mount1Height])
 		    mount2();
 	  }
+	  if (mount3) {
+               translate([0, 0, -swivelWidth * 2 - mount1Height * 2])
+                    mount3();
+	  }
 	  if (!print) {
-	       translate([-10.5, -7.8, mount1Height / 2 - 1.2])
+	       translate([-10.5, -7.8 + mount1YMove, mount1Height / 2 - 1.2])
 		    mpu6050_gy521();
 	  }
      }
@@ -143,8 +170,13 @@ if (!print) {
 	       mount1();
      }
      if (mount2) {
-	  translate([width + mount2Width/ 2 + 2, mount1Depth / 2 + mount2Depth + 2, mount2Height / 2 + swivelWidth])
+	  translate([width + mount2Width/ 2 + 2, mount1Depth / 2 + mount2Depth + 2 + mount1YMove, mount2Height / 2 + swivelWidth])
 	       mount2();
+     }
+
+     if (mount3) {
+          translate([width + mount2Width / 2 + 2, mount1Depth / 2 + mount2Depth + 2 + mount2ExtraDepth + 2 + mount2Depth + 2, mount3Height / 2])
+               mount3();
      }
 }
 
@@ -197,13 +229,28 @@ if (casing) { // create the main body
 	  
 	  screenPosts(); // add screw posts for the screen
 
-	  add_mount3(); // add mount for the mpu
+	  add_mount4(); // add mount for the mpu
 
 	  batteryCompartment(); // add battercompartment
 
-	  pcbMount(); // add PCB mount posts
+	  //pcbMount(); // add PCB mount posts
+
+	  unoMount(); // the mount posts for the arduino uno
      }
 }
+
+module unoMount() {
+     translate([width - wallThickness - 69 - 2, batteryWidth + wallThickness * 2 + lidRest + 53 + 2, wallThickness + unoPostHeight])
+	  rotate([0, 0, -90])
+	  union() {
+	  unoMountPosts(unoPostHeight, unoPostDia);
+	  
+	  if (!print) {
+	       arduinoUno();
+	  }
+     }    
+}
+
 
 if (lid) { // create the lid
      if (print) {
@@ -297,7 +344,7 @@ module pushButtonHoles() {
      translate([width * buttonsXPlaceFactor, depth - wedgeHeight / 2, wedgeHeight / 2])
           rotate([45, 0, 0])
           union() {
-          for ( i = [-pushButtonDist : pushButtonDist : pushButtonDist] ){ // make the three button holes for X, Y and Z zero
+/*          for ( i = [-pushButtonDist : pushButtonDist : pushButtonDist] ){ // make the three button holes for X, Y and Z zero
                translate([i, pushButtonDist / 2, -wallThickness / 2])
                     cylinder(wallThickness * overSizeFactor, pushButtonHoleDia / 2, pushButtonHoleDia / 2, center = true);
           }
@@ -305,6 +352,11 @@ module pushButtonHoles() {
           for ( i = [-pushButtonDist: pushButtonDist : 0] ){ // make the two button holes for all zero and ... 
                translate([i, -pushButtonDist / 2, -wallThickness / 2])
                     cylinder(wallThickness * overSizeFactor, pushButtonHoleDia / 2, pushButtonHoleDia / 2, center = true);
+          }
+*/
+	  for ( i = [-pushButtonDist * 1.5: pushButtonDist : pushButtonDist * 2.5] ){ // make the four button holes
+               translate([i, -pushButtonDist / 2 * buttonsYPlaceFactor, -wallThickness / 2]) 
+                    cylinder(wallThickness * overSizeFactor, pushButtonHoleDia / 2, pushButtonHoleDia / 2, center = true);                                                                   
           }
      }
 }
@@ -314,7 +366,7 @@ module pushButtons() {
 	  translate([width * buttonsXPlaceFactor, depth - wedgeHeight / 2, wedgeHeight / 2])
 	       rotate([45, 0, 0])
 	       union() {
-	       for ( i = [-pushButtonDist : pushButtonDist : pushButtonDist] ){ // make the three buttons for X, Y and Z zero
+/*	       for ( i = [-pushButtonDist : pushButtonDist : pushButtonDist] ){ // make the three buttons for X, Y and Z zero
 		    translate([i, pushButtonDist / 2, 0])
 			 rotate([180, 0, 0])
 			 pushButton(wallThickness);
@@ -324,7 +376,12 @@ module pushButtons() {
 		    translate([i, -pushButtonDist / 2, 0])
 			 rotate([180, 0, 0])
 			 pushButton(wallThickness);
-	       }
+	       }*/
+	       for ( i = [-pushButtonDist * 1.5: pushButtonDist : pushButtonDist * 2.5] ){ // make the four buttons
+                    translate([i, -pushButtonDist / 2 * buttonsYPlaceFactor, 0])
+                         rotate([180, 0, 0])
+                         pushButton(wallThickness);
+               }
 	  }
      }
 }
@@ -333,8 +390,12 @@ module ledHoles() {
      translate([width * ledsXPlaceFactor, depth - wedgeHeight / 2, wedgeHeight / 2])
           rotate([45, 0, 0])
           union() {
-          for ( i = [-ledDist * 2: ledDist : ledDist * 2] ){ // make the five LED holes
+          /*for ( i = [-ledDist * 2: ledDist : ledDist * 2] ){ // make the five LED holes
                translate([i, 0, -wallThickness / 2])
+                    cylinder(wallThickness * overSizeFactor, (ledDia + 0.2) / 2, (ledDia + 0.2) / 2, center = true);
+          }*/
+	  for ( i = [-ledDist * 2: ledDist : ledDist * 2] ){ // make the five LED holes 
+               translate([i, pushButtonDist / 2 * ledsYPlaceFactor, -wallThickness / 2])
                     cylinder(wallThickness * overSizeFactor, (ledDia + 0.2) / 2, (ledDia + 0.2) / 2, center = true);
           }
      }
@@ -345,71 +406,50 @@ module leds() {
 	  translate([width * ledsXPlaceFactor, depth - wedgeHeight / 2, wedgeHeight / 2])
 	       rotate([45, 0, 0])
 	       union() {
-	       for ( i = [-ledDist * 2: ledDist : ledDist * 2] ) { // insert LEDs into holes
-		    /*if (i == -ledDist * 2) {
-			 _color = "Red";
-			 echo("Red LED: ", _color);
-		    } else if (i == ledDist * 2) {
-			 color = "Red";
-			 echo("Red LED: ", _color);
-		    } else if (i == -ledDist) {
-			 _color = "Yellow";
-			 echo("Yellow LED: ", _color);
-		    } else if (i == ledDist) {
-			 _color = "Yellow";
-			 echo("Yellow LED: ", _color);
-		    } else {
-			 _color = "Green";
-			 echo("Green LED: ", _color);
-		    }
-		    echo("Led dist: ", ledDist);
-		    echo("i: ", i);
-		    echo("Color: ", _color);
-
-		    echo("Drawing LED: ", _color);*/
+/*	       for ( i = [-ledDist * 2: ledDist : ledDist * 2] ) { // insert LEDs into holes
 		    translate([i, 0, wallThickness / 2])
 			 rotate([180, 0, 0])
 			 led(ledDia, _color);
-	       }
+	       }*/
+	       for ( i = [-ledDist * 2: ledDist : ledDist * 2] ) { // insert LEDs into holes
+                    translate([i, pushButtonDist / 2 * ledsYPlaceFactor, wallThickness / 2])
+                         rotate([180, 0, 0])
+                         led(ledDia, _color);
+               }
 	  }
      }
 }
 
 module powerSwitchMount() {
-     translate([(6 + wallThickness) / 2, depth - wedgeHeight - (20 + wallThickness * 2) / 2, (6 + wallThickness * 2) / 2 + wallThickness])
+     translate([(knobHeight + mountPlateHeight + wallThickness + 0.5) / 2, depth - wedgeHeight - (totalWidth + 1 + wallThickness * 2) / 2, (holeDepth + wallThickness * 2) / 2 + wallThickness])
 
 	  union() {
-//	  print = true;
-	  if (!print) {
-	       translate([(5 + wallThickness) / 2 - wallThickness - 0.5, 0, 0])
-		    rotate([-90, 0, 90])
-		    powerSwitch(20, 10.5, 7, 15, 2, 6, 3, 3, 5, 0.5, 5, 1.5, 0.5, 3, 2.54);
-	       // powerSwitch(totalWidth, holeWidth, holeDepth, screwHoleWidth, screwHoleDia, knobHoleWidth, knobDepth, knobWidth, knobHeight, mountPlateHeight, bodyHeight, legWidth, legDepth, legLength, legSpacing) {
+	       if (!print) {
+		    translate([(knobHeight + wallThickness) / 2 - wallThickness + 0.5, 0, 0])
+			 rotate([-90, 0, 90])
+			 powerSwitch(totalWidth, holeWidth, holeDepth, screwHoleWidth, screwHoleDia, knobHoleWidth, knobDepth, knobWidth, knobHeight, mountPlateHeight, bodyHeight, legWidth, legDepth, legLength, legSpacing);
+	       }
+	       cube([knobHeight + mountPlateHeight + wallThickness + 0.5, totalWidth + wallThickness * 2, holeDepth + wallThickness * 2], center = true);
 	  }
-	  
-	  translate([0, 0, 0])
-	       cube([6 + wallThickness, 20 + wallThickness * 2, 6 + wallThickness * 2], center = true);
-	  
-     }
 }
 
 
 module powerSwitchHoles() {
-     translate([(6 + wallThickness) / 2, depth - wedgeHeight - (20 + wallThickness * 2) / 2, (6 + wallThickness * 2) / 2 + wallThickness])
+     translate([0, depth - wedgeHeight - (totalWidth + 1 + wallThickness * 2) / 2, (holeDepth + wallThickness * 2) / 2 + wallThickness])
 	  union() {
-	  translate([-(6 + wallThickness) / 2 + 3, 0, 0])
-	       cube([6 * overSize, 20, 6], center = true);
+	  translate([(knobHeight + mountPlateHeight + 0.5) / 2, 0, 0])
+	       cube([knobHeight + mountPlateHeight + 0.5, totalWidth + 1, holeDepth + 1], center = true);
 	  
-	  translate([(6 + wallThickness) / 2 - wallThickness / 2, 0, 0]) // knob cut out
-	       cube([wallThickness * overSize, 11, 6], center = true);
+	  translate([(knobHeight + mountPlateHeight + wallThickness + 0.5) / 2, 0, 0]) // knob cut out
+	       cube([knobHeight + mountPlateHeight + wallThickness + 0.5, holeWidth + 1, holeDepth + 1], center = true);
 
-	  translate([(6 + wallThickness) / 2 - wallThickness / 2, 15 / 2, 0]) // screw holes
+	  translate([(knobHeight + mountPlateHeight + wallThickness + 0.5) / 2, 15 / 2, 0]) // screw holes
 	       rotate([0, 90, 0])
-	       cylinder(wallThickness * overSize, 1, 1, center = true);
+	       cylinder(knobHeight + mountPlateHeight + wallThickness + 0.5, 1, 1, center = true);
 
-	  translate([(6 + wallThickness) / 2 - wallThickness / 2, -15 / 2, 0]) // screw holes
+	  translate([(knobHeight + mountPlateHeight + wallThickness + 0.5) / 2, -15 / 2, 0]) // screw holes
 	       rotate([0, 90, 0])
-	       cylinder(wallThickness * overSize, 1, 1, center = true);
+	       cylinder(knobHeight + mountPlateHeight + wallThickness + 0.5, 1, 1, center = true);
 
      }
 }
@@ -543,23 +583,23 @@ module drawLid () { // create the lid
      }
 }
 
-module add_mount3() {
+module add_mount4() {
      union() {
-	  translate([mount1Width / 2 + wallThickness + lidPostDia + lidPostOffset, -(-swivelWidth - mount1Height) * 2 + wallThickness * 1.5 + lidPostDia + lidPostOffset, mount3Depth / 2 + mount3ExtraDepth + wallThickness])
+	  translate([mount1Width / 2 + wallThickness + lidPostDia + lidPostOffset, (mount1Height  + swivelWidth) * 3 + wallThickness, mount3Depth / 2 + mount3ExtraDepth + wallThickness])
 	       rotate([-90, 0, 0])
-	       translate([0, 0, (-swivelWidth - mount1Height) * 2])
-	       mount3();
-	  
+	       translate([0, 0, (-swivelWidth - mount1Height * 2) * 2])
+	       mount4();
+	  /*
 	  translate([wallThickness + lidPostDia + lidPostOffset, 0, 0]) // supports
 	       cube([3, wallThickness + lidPostDia + lidPostOffset, mount3Depth + mount3ExtraDepth + wallThickness]);
 	  translate([wallThickness + lidPostDia + lidPostOffset + mount3Width - 3, 0, 0])
 	       cube([3, wallThickness + lidPostDia + lidPostOffset, mount3Depth + mount3ExtraDepth + wallThickness]);
-	  
+	  */
      }
 }
 
 module adjustmentHoles() {
-     translate([mount1Width - springHoleDia / 2 - adjScrewEdgeDist + wallThickness + lidPostDia + lidPostOffset, depth - wedgeHeight / 2, wallThickness + mount3ExtraDepth + mount3Depth / 2]) // X adjust
+     translate([mount1Width - springHoleDia / 2 - adjScrewEdgeDist + wallThickness + lidPostDia + lidPostOffset, depth - wedgeHeight / 2, wallThickness + mount3ExtraDepth + mount3Depth / 2- mount1YMove]) // X adjust
 	  rotate([90, 0, 0])
 	  cylinder(wedgeHeight, adjustmentHoleDia / 2, adjustmentHoleDia / 2, center = true);
 
@@ -569,7 +609,6 @@ module adjustmentHoles() {
 }
 
 module batteryCompartment() {
-     //translate([width - batteryHeight - wallThickness * 2, lidPostDia + lidPostOffset + wallThickness, 0])
      translate([width - batteryHeight - wallThickness * 2 - lidPostDia + lidPostOffset, lidRest, 0])
 	  difference() {
 	  cube([batteryHeight + wallThickness * 2, batteryWidth + wallThickness * 2, height - lidThickness]);
@@ -579,10 +618,11 @@ module batteryCompartment() {
 	  
 	  translate([wallThickness, batteryWidth + wallThickness, height - lidThickness - 3]) // make a cutout for wires
 	       cube([3, wallThickness, 3]);
-
+/*
 	  translate([0, (batteryWidth + wallThickness * 2) / 2 + 2, height - lidThickness - height + 32]) // male a cutout for swivel screw
 	       rotate([0, 90, 0])
               cylinder(wallThickness, 3, 3);
+*/
 	  }
 }
 
