@@ -1,0 +1,1 @@
+../../myCAD/OpenSCAD/power_switch.scad

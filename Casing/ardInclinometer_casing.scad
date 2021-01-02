@@ -345,31 +345,42 @@ module leds() {
 	  translate([width * ledsXPlaceFactor, depth - wedgeHeight / 2, wedgeHeight / 2])
 	       rotate([45, 0, 0])
 	       union() {
-	       for ( i = [-ledDist * 2: ledDist : ledDist * 2] ) { // insert LEDs into holes
-		    /*if (i == -ledDist * 2) {
-			 _color = "Red";
-			 echo("Red LED: ", _color);
-		    } else if (i == ledDist * 2) {
-			 color = "Red";
-			 echo("Red LED: ", _color);
-		    } else if (i == -ledDist) {
-			 _color = "Yellow";
-			 echo("Yellow LED: ", _color);
-		    } else if (i == ledDist) {
-			 _color = "Yellow";
-			 echo("Yellow LED: ", _color);
-		    } else {
-			 _color = "Green";
-			 echo("Green LED: ", _color);
-		    }
-		    echo("Led dist: ", ledDist);
-		    echo("i: ", i);
-		    echo("Color: ", _color);
+	    for ( i = [-ledDist * 2: ledDist : ledDist * 2] ) { // insert LEDs into holes
+	      /*
+		if (i == -ledDist * 2) {
+		_color = "Red";
+		echo("Red LED: ", _color);
+	      } else if (i == ledDist * 2) {
+		color = "Red";
+		echo("Red LED: ", _color);
+	      } else if (i == -ledDist) {
+		_color = "Yellow";
+		echo("Yellow LED: ", _color);
+	      } else if (i == ledDist) {
+		_color = "Yellow";
+		echo("Yellow LED: ", _color);
+	      } else {
+		_color = "Green";
+		echo("Green LED: ", _color);
+	      }
+	      
+	      echo("Led dist: ", ledDist);
+	      echo("i: ", i);
+	      echo("Color: ", _color);
+	      
+	      echo("Drawing LED: ", _color);
+	      */		
+		
+		 translate([i, 0, wallThickness / 2])
+		   rotate([180, 0, 0])
+		   if ((i == -ledDist * 2) || (i == ledDist * 2)) {
+		     led(ledDia, "red");
+		   } else if ((i == -ledDist) || (i == ledDist)) {
+		     led(ledDia, "yellow");
+		   } else {
+		     led(ledDia, "green");
+		   }
 
-		    echo("Drawing LED: ", _color);*/
-		    translate([i, 0, wallThickness / 2])
-			 rotate([180, 0, 0])
-			 led(ledDia, _color);
 	       }
 	  }
      }

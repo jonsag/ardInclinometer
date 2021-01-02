@@ -86,10 +86,10 @@ screenPostHoleDia = 2.5;
 screenPostHoleDepth = 3;
 
 screenWidth = 23;
-screenHeight = 11.5;
-screenOffset = 2.25;
+screenHeight = 14.5;
+screenOffset = 0.75;
 
-screenCoverOverSize = 1;
+screenCoverOverSize = 2;
 screenCoverRecess = 2;
 
 screenXPlaceFactor = 0.75; // a value between 0 and 1
@@ -116,10 +116,10 @@ lidRecess = 2;
 
 // print text on lid
 textOnLid1 = "ardInclinometer";
-textOnLid2 = "by Jon Sagebrand";
+textOnLid2 = "by Jonix";
 
 lidTextFont = "Liberation Sans:style=Bold Italic";
-lidFontSize = 6;
+lidFontSize = 9;
 
 // mpu6050
 include <mpu_mount-2.0.scad>;
@@ -413,8 +413,14 @@ module leds() {
 	       }*/
 	       for ( i = [-ledDist * 2: ledDist : ledDist * 2] ) { // insert LEDs into holes
                     translate([i, pushButtonDist / 2 * ledsYPlaceFactor, wallThickness / 2])
-                         rotate([180, 0, 0])
-                         led(ledDia, _color);
+		      rotate([180, 0, 0])
+		      if ((i == -ledDist * 2) || (i == ledDist * 2)) {
+			led(ledDia, "red");
+		      } else if ((i == -ledDist) || (i == ledDist)) {
+			led(ledDia, "yellow");
+		      } else {
+			led(ledDia, "green");
+		      }
                }
 	  }
      }
@@ -697,3 +703,4 @@ module GM009605v4() {
           rotate(a=180, v=[1, 0, 0])
           pin_headers(4, 1);
 }
+
