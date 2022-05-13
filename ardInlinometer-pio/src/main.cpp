@@ -1,3 +1,6 @@
+
+#include <Arduino.h>
+
 #include "configuration.h" // sets all variables
 #include "maths.h" // calculations
 #include "printOLED.h" // prints on OLED screen
@@ -96,11 +99,11 @@ void setup() {
     Serial.println("Starting debouncer ...");
   }
 
-  pinDebouncer.addPin(2, LOW); // pin has external pull-down resistor
-  pinDebouncer.addPin(3, LOW);
-  pinDebouncer.addPin(4, LOW);
-  pinDebouncer.addPin(5, LOW);
-  pinDebouncer.addPin(6, LOW);
+  pinDebouncer.addPin(2, LOW, onPinActivated, onPinDeactivated); // pin has external pull-down resistor
+  pinDebouncer.addPin(3, LOW, onPinActivated, onPinDeactivated);
+  pinDebouncer.addPin(4, LOW, onPinActivated, onPinDeactivated);
+  pinDebouncer.addPin(5, LOW, onPinActivated, onPinDeactivated);
+  pinDebouncer.addPin(6, LOW, onPinActivated, onPinDeactivated);
 
   pinDebouncer.begin();
 
