@@ -25,7 +25,7 @@ displayYoffset = 12.420 / 2;
 ledDia = 5.5;
 
 buttonRodDia = 5;
-
+buttonRodStickOut = 1;
 buttonGuideZ = 9.2 + pcbZadj;
 
 ledTunnelZ = 12 + pcbZadj;
@@ -42,6 +42,7 @@ lidScrewHoleDia = 3.5;
 textFont = "Liberation Sans";
 textSize1 = 5;
 textSize2 = 3;
+textSize3 = 3;
 
 text1 = "ardInclinometer";
 text2 = "github.com/jonsag/ardInclinometer";
@@ -53,7 +54,7 @@ lidPostInset = 1;
 
 pcbPostZ = 15.75 + pcbZadj;
 pcbPostDia = 7.5;
-pcbPostHoleDia= 5;
+pcbPostHoleDia = 5;
 
 // casing measurements
 extraSpace = 1;

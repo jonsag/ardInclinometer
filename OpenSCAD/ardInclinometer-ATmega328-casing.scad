@@ -11,11 +11,28 @@ module drawAll()
 	if (showBox)
 		drawBox();
 
-	if (showButtonRods && !print)
+	if (showButtonRods)
+	{
+		rodsZ = print ? buttonGuideZ + wallThickness * 1.5 : 0;
+
+		rodsRotY = print ? 180 : 0;
+
+		translate([ 0, 0, rodsZ - buttonRodStickOut - 0.3])
+		rotate([ 0, rodsRotY, 0 ])
 		drawButtonRods();
+	}
 
 	if (showLid)
+	{
+		lidX = print ? boxX * 2 : 0;
+		lidZ = print ? boxZ : 0;
+
+		lidRotY = print ? 180 : 0;
+
+		translate([ lidX, 0, lidZ ])
+		rotate([ 0, lidRotY, 0 ])
 		drawLid();
+	}
 }
 
 module drawBoard()
@@ -125,6 +142,65 @@ module drawBox()
 				boxX / 2 - displayX / 2 + displayXoffset, boxY / 2 - displayY / 2 + displayYoffset, -wallThickness / 2
 			])
 			cube(size = [ displayX, displayY, wallThickness * 2 ], center = false);
+			//}
+
+			// LED text
+			for (i = [-6.985 * 2:6.985:6.985 * 2])
+			{
+				color("red") translate([ boxX / 2 + i - 2.2225, boxY / 2 - 14.46 - 5, -wallThickness * 1.5 ])
+				linear_extrude(wallThickness * 2)
+
+				    if (i == -6.985 * 2)
+				{
+					text(text = "++", font = textFont, size = textSize3, valign = "center", halign = "center");
+				}
+				else if (i == -6.985)
+				{
+					text(text = "+", font = textFont, size = textSize3, valign = "center", halign = "center");
+				}
+				else if (i == 0)
+				{
+					text(text = "0", font = textFont, size = textSize3, valign = "center", halign = "center");
+				}
+				else if (i > 6.084 && i < 6.986)
+				{
+					text(text = "-", font = textFont, size = textSize3, valign = "center", halign = "center");
+				}
+				else if (i == 6.985 * 2)
+				{
+					text(text = "--", font = textFont, size = textSize3, valign = "center", halign = "center");
+				}
+			}
+
+			// button text
+			for (i = [-8.255 * 2:8.255:8.255 * 2])
+			{
+				color("red") translate([ boxX / 2 - 28.2575 - 5, boxY / 2 + i, wallThickness * 0.5 ])
+				rotate([ 0, 180, 0 ])
+				linear_extrude(wallThickness * 2)
+
+				    /*if (i == -8.255 * 2)
+				    {
+				        text(text = "X", font = textFont, size = textSize3, valign = "center", halign = "left");
+				    }
+				    else*/
+				    if (i == -8.255)
+				{
+					text(text = "ALL", font = textFont, size = textSize3, valign = "center", halign = "left");
+				}
+				else if (i == 0)
+				{
+					text(text = "Z", font = textFont, size = textSize3, valign = "center", halign = "left");
+				}
+				else if (i > 8.254 && i < 8.256)
+				{
+					text(text = "Y", font = textFont, size = textSize3, valign = "center", halign = "left");
+				}
+				else if (i == 8.255 * 2)
+				{
+					text(text = "X", font = textFont, size = textSize3, valign = "center", halign = "left");
+				}
+			}
 		}
 	}
 }
@@ -133,11 +209,11 @@ module drawButtonRods()
 {
 	for (i = [-8.255 * 2:8.255:8.255 * 2])
 	{
-		color("black") translate([ boxX / 2 - 28.2575, boxY / 2 + i, -wallThickness / 2 ])
+		color("black") translate([ boxX / 2 - 28.2575, boxY / 2 + i, -wallThickness / 2 - buttonRodStickOut * 2 - 0.3])
 		union()
 		{
-			cylinder(h = buttonGuideZ + wallThickness + 1, d = buttonRodDia - 0.5);
-			translate([ 0, 0, buttonGuideZ + wallThickness / 2 ])
+			cylinder(h = buttonGuideZ + wallThickness + buttonRodStickOut, d = buttonRodDia - 0.5);
+			translate([ 0, 0, buttonGuideZ + wallThickness + buttonRodStickOut])
 			cylinder(h = wallThickness, d = buttonRodDia + wallThickness * 2);
 		}
 	}
@@ -149,10 +225,30 @@ module drawLid()
 	{
 		color("lightgreen")
 		    translate([ wallThickness + lidClearance / 2, wallThickness + lidClearance / 2, boxZ - wallThickness ])
-		roundedcube([ boxX - wallThickness * 2 - lidClearance, boxY - wallThickness * 2 - lidClearance, wallThickness ],
-		            false, boxCornerRadius, "z");
+		union()
+		{
+			roundedcube(
+			    [ boxX - wallThickness * 2 - lidClearance, boxY - wallThickness * 2 - lidClearance, wallThickness ],
+			    false, boxCornerRadius, "z");
 
-		// lid screw posts
+			translate([ 0, lidPostDia, -wallThickness ])
+			roundedcube(
+			    [
+				    boxX - wallThickness * 2 - lidClearance, boxY - wallThickness * 2 - lidClearance - lidPostDia * 2,
+				    wallThickness
+			    ],
+			    false, boxCornerRadius, "z");
+
+			translate([ lidPostDia, 0, -wallThickness ])
+			roundedcube(
+			    [
+				    boxX - wallThickness * 2 - lidClearance - lidPostDia * 2, boxY - wallThickness * 2 - lidClearance,
+				    wallThickness
+			    ],
+			    false, boxCornerRadius, "z");
+		}
+
+		// lid screw holes
 		color("red") for (i = [lidPostDia / 2 +
 		                      lidPostInset:boxX - lidPostDia - lidPostInset * 2:boxX - lidPostDia / 2 - lidPostInset])
 		{
@@ -165,11 +261,12 @@ module drawLid()
 			}
 		}
 
-		color("red") translate([ boxX / 2, boxY / 2 + textSize1, boxZ - wallThickness / 2])
+		// text on lid
+		color("red") translate([ boxX / 2, boxY / 2 + textSize1, boxZ - wallThickness / 2 ])
 		linear_extrude(wallThickness)
 		    text(text = str(text1), font = textFont, size = textSize1, valign = "center", halign = "center");
 
-		color("red") translate([ boxX / 2, boxY / 2 - textSize2, boxZ - wallThickness / 2])
+		color("red") translate([ boxX / 2, boxY / 2 - textSize2, boxZ - wallThickness / 2 ])
 		linear_extrude(wallThickness)
 		    text(text = str(text2), font = textFont, size = textSize2, valign = "center", halign = "center");
 	}
