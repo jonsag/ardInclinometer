@@ -49,7 +49,7 @@ boolean angleZLocked = false;
 boolean anglesLocked = false;
 
 double measureTime = 282; // for how long should values be read before averaged, ms
-int values = 0; // counting values read
+int values = 0;           // counting values read
 
 /*******************************
   OLED

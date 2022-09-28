@@ -2,13 +2,13 @@
 #include <Arduino.h>
 
 #include "configuration.h" // sets all variables
-#include "maths.h" // calculations
-#include "printOLED.h" // prints on OLED screen
-#include "buttons.h" // handle button presses
-#include "LEDs.h" // lights up a LED corresponding to X-angle
+#include "maths.h"         // calculations
+#include "printOLED.h"     // prints on OLED screen
+#include "buttons.h"       // handle button presses
+#include "LEDs.h"          // lights up a LED corresponding to X-angle
 
-
-void setup() {
+void setup()
+{
   /*******************************
     Wire
   *******************************/
@@ -21,17 +21,17 @@ void setup() {
 
   oled.begin(&Adafruit128x64, I2C_ADDRESS);
 
-  //oled.setFont(Adafruit5x7);
+  // oled.setFont(Adafruit5x7);
   oled.setFont(System5x7);
 
   oled.clear();
   oled.println("ardInclinometer");
 
-
   /*******************************
     Start serial
   *******************************/
-  if (debug) {
+  if (debug)
+  {
     oled.println("Starting serial ...");
 
     Serial.begin(serialSpeed);
@@ -45,7 +45,9 @@ void setup() {
     Serial.println(author);
     Serial.println(email);
     Serial.println();
-  } else {
+  }
+  else
+  {
     oled.println();
   }
 
@@ -54,7 +56,8 @@ void setup() {
   *******************************/
   oled.println("Starting MPU ...");
 
-  if (debug) {
+  if (debug)
+  {
     Serial.println("=====================================");
     Serial.println("Starting MPU ...");
   }
@@ -63,7 +66,8 @@ void setup() {
 
   oled.println("Calibrating ...");
 
-  if (debug) {
+  if (debug)
+  {
     Serial.println("Starting calibration ...");
   }
 
@@ -71,7 +75,8 @@ void setup() {
 
   oled.println("Calibrating ...");
 
-  if (debug) {
+  if (debug)
+  {
     Serial.println();
   }
 
@@ -80,7 +85,8 @@ void setup() {
   *******************************/
   oled.println("Starting in-, outputs ...");
 
-  if (debug) {
+  if (debug)
+  {
     Serial.println("Starting in-, outputs ...");
   }
 
@@ -95,7 +101,8 @@ void setup() {
   *******************************/
   oled.print("Start debouncer ...");
 
-  if (debug) {
+  if (debug)
+  {
     Serial.println("Starting debouncer ...");
   }
 
@@ -109,7 +116,8 @@ void setup() {
 
   oled.clear();
 
-  if (debug) {
+  if (debug)
+  {
     Serial.println("Started!");
     Serial.println();
   }
@@ -117,10 +125,12 @@ void setup() {
   startMillis = millis();
 }
 
-void loop() {
+void loop()
+{
   pinDebouncer.update(); // reads and handles all buttons
 
-  if (millis() - startMillis < measureTime) {
+  if (millis() - startMillis < measureTime)
+  {
     /*******************************
         Measure angles
     *******************************/
@@ -131,7 +141,9 @@ void loop() {
     angleXAcc += mpu6050.getAngleX();
     angleYAcc += mpu6050.getAngleY();
     angleZAcc += mpu6050.getAngleZ();
-  } else {
+  }
+  else
+  {
     /*******************************
       Calculate angles
     *******************************/
@@ -141,15 +153,18 @@ void loop() {
 
     lightLED(angleX, angleXLock); // light the LED
 
-    if (angleX != oldAngleX) {
+    if (angleX != oldAngleX)
+    {
       printActualAng(0, angleX, angleXLock); // prints the actual values on screen
       oldAngleX = angleX;
     }
-    if (angleY != oldAngleY) {
+    if (angleY != oldAngleY)
+    {
       printActualAng(2, angleY, angleYLock);
       oldAngleY = angleY;
     }
-    if (angleZ != oldAngleZ) {
+    if (angleZ != oldAngleZ)
+    {
       printActualAng(4, angleZ, angleZLock);
       oldAngleZ = angleZ;
     }
@@ -163,7 +178,8 @@ void loop() {
     startMillis = millis();
   }
 
-  if (false) {
+  if (false)
+  {
     Serial.print("\tAngles, X: ");
     Serial.print(angleX);
     Serial.print("\tY: ");
@@ -180,11 +196,13 @@ void loop() {
   /*******************************
     Messages
   *******************************/
-  if (millis() - messMillis >= messTime) {
+  if (millis() - messMillis >= messTime)
+  {
     mess = "";
   }
 
-  if (mess != oldMess) {
+  if (mess != oldMess)
+  {
     printMess(mess);
     oldMess = mess;
   }

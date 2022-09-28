@@ -1,4 +1,5 @@
-void printActualAng(byte posY, double ang, double angLock) {
+void printActualAng(byte posY, double ang, double angLock)
+{
   /*******************************
     Print the deviation from the locked angles
   *******************************/
@@ -11,16 +12,18 @@ void printActualAng(byte posY, double ang, double angLock) {
   int angDevLength = angDevStr.length();
   angDevStr[angDevLength - 1] = '\0';
 
-  oled.setCursor(0, posY);  // print the deviation at the start of the line
+  oled.setCursor(0, posY); // print the deviation at the start of the line
 
-  if (angDev >= 0) {
+  if (angDev >= 0)
+  {
     oled.print(" ");
     oled.setCursor(oled.col(), posY);
   }
 
   oled.print(angDevStr);
 
-  for (byte i = angDevStr.length(); i < 7; i++) {
+  for (byte i = angDevStr.length(); i < 7; i++)
+  {
     oled.setCursor(oled.col(), posY);
     oled.print(" ");
   }
@@ -35,16 +38,18 @@ void printActualAng(byte posY, double ang, double angLock) {
   int angLength = angStr.length(); // strip the last decimal
   angStr[angLength - 1] = '\0';
 
-  oled.setCursor(75, posY + 1);  // print the real angle after the deviation
+  oled.setCursor(75, posY + 1); // print the real angle after the deviation
 
-  if (ang >= 0) {
+  if (ang >= 0)
+  {
     oled.print(" ");
     oled.setCursor(oled.col(), posY + 1);
   }
 
   oled.print(angStr);
 
-  for (byte i = angStr.length(); i < 7; i++) {
+  for (byte i = angStr.length(); i < 7; i++)
+  {
     oled.setCursor(oled.col(), posY + 1);
     oled.print(" ");
   }
@@ -59,35 +64,47 @@ void printActualAng(byte posY, double ang, double angLock) {
     oled.setCursor(posX + angStr.length() * 10 - 2, posY);
     oled.print(" ");
   */
-
 }
 
-void printAxisLocked(String axis, boolean lock) {
+void printAxisLocked(String axis, boolean lock)
+{
   oled.set2X();
 
-  if (axis == "X") {
+  if (axis == "X")
+  {
     oled.setCursor(116, 0);
-  } else if (axis == "Y") {
+  }
+  else if (axis == "Y")
+  {
     oled.setCursor(116, 2);
-  } else if (axis == "Z") {
+  }
+  else if (axis == "Z")
+  {
     oled.setCursor(116, 4);
   }
 
-  if (lock) {
+  if (lock)
+  {
     oled.print(axis);
-  } else {
+  }
+  else
+  {
     oled.print(" ");
   }
 }
 
-void printMess(String message) {
+void printMess(String message)
+{
   oled.set2X();
 
   oled.setCursor(0, 6);
 
-  if (message == "") {
+  if (message == "")
+  {
     oled.clearToEOL();
-  } else {
+  }
+  else
+  {
     oled.print(message);
   }
 }
