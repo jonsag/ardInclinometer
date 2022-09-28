@@ -17,7 +17,7 @@ module drawAll()
 
 		rodsRotY = print ? 180 : 0;
 
-		translate([ 0, 0, rodsZ - buttonRodStickOut - 0.3])
+		translate([ 0, 0, rodsZ - buttonRodStickOut - 0.3 ])
 		rotate([ 0, rodsRotY, 0 ])
 		drawButtonRods();
 	}
@@ -209,11 +209,11 @@ module drawButtonRods()
 {
 	for (i = [-8.255 * 2:8.255:8.255 * 2])
 	{
-		color("black") translate([ boxX / 2 - 28.2575, boxY / 2 + i, -wallThickness / 2 - buttonRodStickOut * 2 - 0.3])
+		color("black") translate([ boxX / 2 - 28.2575, boxY / 2 + i, -wallThickness / 2 - buttonRodStickOut * 2 - 0.3 ])
 		union()
 		{
 			cylinder(h = buttonGuideZ + wallThickness + buttonRodStickOut, d = buttonRodDia - 0.5);
-			translate([ 0, 0, buttonGuideZ + wallThickness + buttonRodStickOut])
+			translate([ 0, 0, buttonGuideZ + wallThickness + buttonRodStickOut ])
 			cylinder(h = wallThickness, d = buttonRodDia + wallThickness * 2);
 		}
 	}
