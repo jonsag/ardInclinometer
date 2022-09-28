@@ -16,7 +16,7 @@ mount3 = false;
 disableAdjustmentHoles = false;
 
 // lay out everything for printing
-print = true;
+print = false;
 
 // main body
 // width = X, depth = Z, height = Y
