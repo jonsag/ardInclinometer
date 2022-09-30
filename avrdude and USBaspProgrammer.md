@@ -40,6 +40,19 @@ Check
 Read fuses  
 >$ avrdude -p m328p -c usbasp -U lfuse:r:-:i -U hfuse:r:-:i -U efuse:r:-:i -v  
 
+Erase flash  
+$ /usr/bin/avrdude -p m328p -c usbasp -t  
+
+    avrdude: AVR device initialized and ready to accept instructions  
+
+    Reading | ################################################## | 100% 0.00s  
+
+>avrdude> erase  
+
+    >>> erase  
+    avrdude: erasing chip  
+    avrdude>  
+
 #### Set fuses
 
 Use [the calculator](https://www.engbedded.com/fusecalc/)  
@@ -95,3 +108,4 @@ An unprogrammed 328P with stock fuses
 The above obviously failed...  
 
 Fuses OK (E:FD, H:DB, L:E2)
+Fuses OK (E:FD, H:D6, L:F7)
