@@ -53,6 +53,9 @@ $ /usr/bin/avrdude -p m328p -c usbasp -t
     avrdude: erasing chip  
     avrdude>  
 
+or simply
+>$ avrdude -p m88p -c usbasp -e  
+
 #### Set fuses
 
 Use [the calculator](https://www.engbedded.com/fusecalc/)  
@@ -90,22 +93,21 @@ An unprogrammed 328P with stock fuses
     Insert target AVR and press button.
 
     Existing fuse values:
-    LFUSE: 3
-    HFUSE: 3
+    LFUSE: F7
+    HFUSE: D6
 
-    Enter desired LFUSE hex value (ie. 0x62): 37
-    Enter desired HFUSE hex value (ie. 0xDF): 79
+    Enter desired LFUSE hex value (ie. 0x62): 62 (enter 0xE2)
+    Enter desired HFUSE hex value (ie. 0xDF): 5B (enter 0xDA)
     Burning fuses...
 
-    Read LFUSE: 3
-    Read HFUSE: 3
+    Read LFUSE: 62
+    Read HFUSE: 5B
     Burn complete.
 
     It is now safe to remove the target AVR.
 
     Insert target AVR and press button.
 
-The above obviously failed...  
-
-Fuses OK (E:FD, H:DB, L:E2)
-Fuses OK (E:FD, H:D6, L:F7)
+Fuses OK (E:FD, H:DA, L:E2)  
+Fuses OK (E:FD, H:D6, L:E2)  
+Fuses OK (E:FD, H:D6, L:F7)  
