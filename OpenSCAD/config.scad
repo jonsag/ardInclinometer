@@ -1,12 +1,12 @@
 // config.scad, configuration for ardInclinometer-ATmega328-casing.scad
 
-print = true;
+print = false;
 
 showBoard = true;
 
-showBox = false;
+showBox = true;
 showButtonRods = true;
-showLid = false;
+showLid = true;
 
 // PCB size in mm
 pcbX = 66.675;
@@ -40,8 +40,6 @@ lidClearance = 0.5;
 lidScrewHoleDia = 3.5;
 lidScrewHeadDia = 5;
 
-lidPostZ = 17.5;
-
 textFont = "Liberation Sans:style=Bold";
 textSize1 = 5;
 textSize2 = 2.5;
@@ -65,5 +63,7 @@ extraSpace = 1;
 boxX = pcbX + wallThickness * 2 + extraSpace * 2;
 boxY = pcbY + wallThickness * 2 + extraSpace * 2;
 boxZ = 35;
+
+lidPostZ = boxZ - pcbPostZ - pcbZ;
 
 roundness = 100;
