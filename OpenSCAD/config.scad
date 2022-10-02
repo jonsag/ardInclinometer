@@ -1,12 +1,12 @@
 // config.scad, configuration for ardInclinometer-ATmega328-casing.scad
 
-print = false;
+print = true;
 
 showBoard = true;
 
-showBox = true;
+showBox = false;
 showButtonRods = true;
-showLid = true;
+showLid = false;
 
 // PCB size in mm
 pcbX = 66.675;
@@ -25,7 +25,7 @@ displayYoffset = 12.420 / 2;
 ledDia = 5.5;
 
 buttonRodDia = 5;
-buttonRodStickOut = 1;
+buttonRodStickOut = 0;
 buttonGuideZ = 9.2 + pcbZadj;
 
 ledTunnelZ = 12 + pcbZadj;
@@ -38,11 +38,14 @@ boxCornerRadius = 5;
 // lid
 lidClearance = 0.5;
 lidScrewHoleDia = 3.5;
+lidScrewHeadDia = 5;
 
-textFont = "Liberation Sans";
+lidPostZ = 17.5;
+
+textFont = "Liberation Sans:style=Bold";
 textSize1 = 5;
-textSize2 = 3;
-textSize3 = 3;
+textSize2 = 2.5;
+textSize3 = 5;
 
 text1 = "ardInclinometer";
 text2 = "github.com/jonsag/ardInclinometer";
@@ -59,10 +62,8 @@ pcbPostHoleDia = 5;
 // casing measurements
 extraSpace = 1;
 
-largerX = true; // if false, box is larger in Y
-
-boxX = largerX ? pcbX + extraSpace * 2 + lidPostDia * 2 + lidPostInset * 2 : pcbX + wallThickness * 2 + extraSpace * 2;
-boxY = !largerX ? pcbY + extraSpace * 2 + lidPostDia * 2 + lidPostInset * 2 : pcbY + wallThickness * 2 + extraSpace * 2;
+boxX = pcbX + wallThickness * 2 + extraSpace * 2;
+boxY = pcbY + wallThickness * 2 + extraSpace * 2;
 boxZ = 35;
 
 roundness = 100;

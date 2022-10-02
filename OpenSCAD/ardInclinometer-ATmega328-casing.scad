@@ -52,26 +52,26 @@ module drawBox()
 			{
 				difference()
 				{
-					roundedcube([ boxX, boxY, boxZ ], false, boxCornerRadius, "z");
+				    roundedcube([ boxX, boxY, boxZ ], false, boxCornerRadius, "z");
 
-					translate([ wallThickness, wallThickness, wallThickness ])
-					roundedcube([ boxX - wallThickness * 2, boxY - wallThickness * 2, boxZ ], false, boxCornerRadius,
-					            "z");
+				    translate([ wallThickness, wallThickness, wallThickness ])
+				    roundedcube([ boxX - wallThickness * 2, boxY - wallThickness * 2, boxZ ], false, boxCornerRadius,
+				                "z");
 
-					// LED holes
-					for (i = [-6.985 * 2:6.985:6.985 * 2])
-					{
-						translate([ boxX / 2 + i - 2.2225, boxY / 2 - 14.46, -wallThickness / 2 ])
-						// translate([ boxX / 2 + pcbX / 2, boxY / 2 - pcbY / 2, boardZ ])
-						cylinder(h = wallThickness * 2, d = ledDia, center = false, $fn = roundness);
-					}
+				    // LED holes
+				    for (i = [-6.985 * 2:6.985:6.985 * 2])
+				    {
+				        translate([ boxX / 2 + i - 2.2225, boxY / 2 - 14.46, -wallThickness / 2 ])
+				        // translate([ boxX / 2 + pcbX / 2, boxY / 2 - pcbY / 2, boardZ ])
+				        cylinder(h = wallThickness * 2, d = ledDia, center = false, $fn = roundness);
+				    }
 
-					// button holes
-					for (i = [-8.255 * 2:8.255:8.255 * 2])
-					{
-						translate([ boxX / 2 - 28.2575, boxY / 2 + i, -wallThickness / 2 ])
-						cylinder(h = wallThickness * 2, d = buttonRodDia + 0.5, center = false, $fn = roundness);
-					}
+				    // button holes
+				    for (i = [-8.255 * 2:8.255:8.255 * 2])
+				    {
+				        translate([ boxX / 2 - 28.2575, boxY / 2 + i, -wallThickness / 2 ])
+				        cylinder(h = wallThickness * 2, d = buttonRodDia + 0.5, center = false, $fn = roundness);
+				    }
 				}
 
 				// pcb screw posts
@@ -86,24 +86,6 @@ module drawBox()
 							cylinder(h = pcbPostZ - wallThickness, d = pcbPostDia, center = true, $fn = roundness);
 							translate([ 0, 0, wallThickness ])
 							color("red") cylinder(h = pcbPostZ, d = pcbPostHoleDia, center = true, $fn = roundness);
-						}
-					}
-				}
-
-				// lid screw posts
-				for (i = [lidPostDia / 2 +
-				         lidPostInset:boxX - lidPostDia - lidPostInset * 2:boxX - lidPostDia / 2 - lidPostInset])
-				{
-					for (j = [lidPostDia / 2 +
-					         lidPostInset:boxY - lidPostDia - lidPostInset * 2:boxY - lidPostDia / 2 - lidPostInset])
-					{
-						translate([ i, j, boxZ / 2 - wallThickness / 2 ])
-						difference()
-						{
-							cylinder(h = boxZ - wallThickness, d = lidPostDia, center = true, $fn = roundness);
-							translate([ 0, 0, wallThickness ])
-							color("red")
-							    cylinder(h = boxZ - wallThickness, d = lidPostHoleDia, center = true, $fn = roundness);
 						}
 					}
 				}
@@ -147,7 +129,7 @@ module drawBox()
 			// LED text
 			for (i = [-6.985 * 2:6.985:6.985 * 2])
 			{
-				color("red") translate([ boxX / 2 + i - 2.2225, boxY / 2 - 14.46 - 5, -wallThickness * 1.5 ])
+				color("red") translate([ boxX / 2 + i - 2.2225, boxY / 2 - 14.46 - 7, -wallThickness * 1.5 ])
 				linear_extrude(wallThickness * 2)
 
 				    if (i == -6.985 * 2)
@@ -175,7 +157,7 @@ module drawBox()
 			// button text
 			for (i = [-8.255 * 2:8.255:8.255 * 2])
 			{
-				color("red") translate([ boxX / 2 - 28.2575 - 5, boxY / 2 + i, wallThickness * 0.5 ])
+				color("red") translate([ boxX / 2 - 28.2575 + 5, boxY / 2 + i, wallThickness * 0.5 ])
 				rotate([ 0, 180, 0 ])
 				linear_extrude(wallThickness * 2)
 
@@ -186,19 +168,19 @@ module drawBox()
 				    else*/
 				    if (i == -8.255)
 				{
-					text(text = "ALL", font = textFont, size = textSize3, valign = "center", halign = "left");
+					text(text = "ALL", font = textFont, size = textSize3, valign = "center", halign = "right");
 				}
 				else if (i == 0)
 				{
-					text(text = "Z", font = textFont, size = textSize3, valign = "center", halign = "left");
+					text(text = "Z", font = textFont, size = textSize3, valign = "center", halign = "right");
 				}
 				else if (i > 8.254 && i < 8.256)
 				{
-					text(text = "Y", font = textFont, size = textSize3, valign = "center", halign = "left");
+					text(text = "Y", font = textFont, size = textSize3, valign = "center", halign = "right");
 				}
 				else if (i == 8.255 * 2)
 				{
-					text(text = "X", font = textFont, size = textSize3, valign = "center", halign = "left");
+					text(text = "X", font = textFont, size = textSize3, valign = "center", halign = "right");
 				}
 			}
 		}
@@ -231,33 +213,16 @@ module drawLid()
 			    [ boxX - wallThickness * 2 - lidClearance, boxY - wallThickness * 2 - lidClearance, wallThickness ],
 			    false, boxCornerRadius, "z");
 
-			translate([ 0, lidPostDia, -wallThickness ])
-			roundedcube(
-			    [
-				    boxX - wallThickness * 2 - lidClearance, boxY - wallThickness * 2 - lidClearance - lidPostDia * 2,
-				    wallThickness
-			    ],
-			    false, boxCornerRadius, "z");
-
-			translate([ lidPostDia, 0, -wallThickness ])
-			roundedcube(
-			    [
-				    boxX - wallThickness * 2 - lidClearance - lidPostDia * 2, boxY - wallThickness * 2 - lidClearance,
-				    wallThickness
-			    ],
-			    false, boxCornerRadius, "z");
-		}
-
-		// lid screw holes
-		color("red") for (i = [lidPostDia / 2 +
-		                      lidPostInset:boxX - lidPostDia - lidPostInset * 2:boxX - lidPostDia / 2 - lidPostInset])
-		{
-			for (j = [lidPostDia / 2 +
-			         lidPostInset:boxY - lidPostDia - lidPostInset * 2:boxY - lidPostDia / 2 - lidPostInset])
+			// pcb screw posts
+			for (i = [3.81:pcbX - 3.81 * 2:pcbX - 3.81])
 			{
-				translate([ i, j, boxZ - wallThickness + wallThickness / 2 ])
-				color("red") cylinder(h = wallThickness * 4 - wallThickness, d = lidScrewHoleDia, center = true,
-				                      $fn = roundness);
+				for (j = [3.81:pcbY - 3.81 * 2:pcbY - 3.81])
+				{
+					translate(
+					    [ i + boxX / 2 - pcbX / 2, j + boxY / 2 - pcbY / 2, 0 ]) // pcbPostZ / 2 - wallThickness / 2 ])
+					translate([ -wallThickness - lidClearance / 2, -wallThickness - lidClearance / 2, -lidPostZ / 2 ])
+					cylinder(h = lidPostZ, d = pcbPostDia, center = true, $fn = roundness);
+				}
 			}
 		}
 
@@ -269,6 +234,27 @@ module drawLid()
 		color("red") translate([ boxX / 2, boxY / 2 - textSize2, boxZ - wallThickness / 2 ])
 		linear_extrude(wallThickness)
 		    text(text = str(text2), font = textFont, size = textSize2, valign = "center", halign = "center");
+
+		// pcb screw posts
+		translate([ wallThickness + lidClearance / 2, wallThickness + lidClearance / 2, boxZ - wallThickness ])
+		for (i = [3.81:pcbX - 3.81 * 2:pcbX - 3.81])
+		{
+			for (j = [3.81:pcbY - 3.81 * 2:pcbY - 3.81])
+			{
+				translate(
+				    [ i + boxX / 2 - pcbX / 2, j + boxY / 2 - pcbY / 2, 0 ]) // pcbPostZ / 2 - wallThickness / 2 ])
+				translate([ -wallThickness - lidClearance / 2, -wallThickness - lidClearance / 2, -lidPostZ / 2 ])
+				union()
+				{
+					color("red")
+					    cylinder(h = lidPostZ + wallThickness * 3, d = lidScrewHoleDia, center = true, $fn = roundness);
+					color("red")
+					translate([0, 0, wallThickness * 1.5])
+					    cylinder(h = lidPostZ + wallThickness, d = lidScrewHeadDia, center = true, $fn = roundness);
+
+				}
+			}
+		}
 	}
 }
 
