@@ -17,7 +17,7 @@ pcbZadj = 0;
 boardZ = 13.8 + pcbZadj;
 
 displayX = 25.400;
-displayY = 19.050;
+displayY = 10.050;
 
 displayXoffset = -3.165 / 2;
 displayYoffset = 12.420 / 2;
@@ -44,6 +44,7 @@ textFont = "Liberation Sans:style=Bold";
 textSize1 = 5;
 textSize2 = 2.5;
 textSize3 = 5;
+textSize4 = 3;
 
 text1 = "ardInclinometer";
 text2 = "github.com/jonsag/ardInclinometer";

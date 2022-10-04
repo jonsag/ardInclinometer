@@ -52,26 +52,26 @@ module drawBox()
 			{
 				difference()
 				{
-				    roundedcube([ boxX, boxY, boxZ ], false, boxCornerRadius, "z");
+					roundedcube([ boxX, boxY, boxZ ], false, boxCornerRadius, "z");
 
-				    translate([ wallThickness, wallThickness, wallThickness ])
-				    roundedcube([ boxX - wallThickness * 2, boxY - wallThickness * 2, boxZ ], false, boxCornerRadius,
-				                "z");
+					translate([ wallThickness, wallThickness, wallThickness ])
+					roundedcube([ boxX - wallThickness * 2, boxY - wallThickness * 2, boxZ ], false, boxCornerRadius,
+					            "z");
 
-				    // LED holes
-				    for (i = [-6.985 * 2:6.985:6.985 * 2])
-				    {
-				        translate([ boxX / 2 + i - 2.2225, boxY / 2 - 14.46, -wallThickness / 2 ])
-				        // translate([ boxX / 2 + pcbX / 2, boxY / 2 - pcbY / 2, boardZ ])
-				        cylinder(h = wallThickness * 2, d = ledDia, center = false, $fn = roundness);
-				    }
+					// LED holes
+					for (i = [-6.985 * 2:6.985:6.985 * 2])
+					{
+						translate([ boxX / 2 + i - 2.2225, boxY / 2 - 14.46, -wallThickness / 2 ])
+						// translate([ boxX / 2 + pcbX / 2, boxY / 2 - pcbY / 2, boardZ ])
+						cylinder(h = wallThickness * 2, d = ledDia, center = false, $fn = roundness);
+					}
 
-				    // button holes
-				    for (i = [-8.255 * 2:8.255:8.255 * 2])
-				    {
-				        translate([ boxX / 2 - 28.2575, boxY / 2 + i, -wallThickness / 2 ])
-				        cylinder(h = wallThickness * 2, d = buttonRodDia + 0.5, center = false, $fn = roundness);
-				    }
+					// button holes
+					for (i = [-8.255 * 2:8.255:8.255 * 2])
+					{
+						translate([ boxX / 2 - 28.2575, boxY / 2 + i, -wallThickness / 2 ])
+						cylinder(h = wallThickness * 2, d = buttonRodDia + 0.5, center = false, $fn = roundness);
+					}
 				}
 
 				// pcb screw posts
@@ -153,6 +153,37 @@ module drawBox()
 					text(text = "--", font = textFont, size = textSize3, valign = "center", halign = "center");
 				}
 			}
+
+			// X arrow
+			color("red") translate([ boxX - 5, 5, wallThickness / 2 ])
+			rotate([ 0, 180, 0 ])
+			linear_extrude(wallThickness * 2)
+			    text(text = "-----> X", font = textFont, size = textSize4, valign = "center", halign = "left");
+
+			// Z arrow
+			for (i = [0:textSize4 + 2:(textSize4 + 2)])
+			{
+				color("red") translate([ boxX - 5, 5 + textSize4 + 2 + i, wallThickness / 2 ])
+				rotate([ 0, 180, 0 ])
+				linear_extrude(wallThickness * 2)
+				    text(text = "|", font = textFont, size = textSize4, valign = "center", halign = "left");
+			}
+
+			color("red") translate([ boxX - 4.5, 5 + textSize4 + 2 * 5, wallThickness / 2 ])
+			rotate([ 0, 180, 0 ])
+			linear_extrude(wallThickness * 2)
+			    text(text = "^", font = textFont, size = textSize4, valign = "center", halign = "left");
+
+			color("red") translate([ boxX - 4.5, 5 + textSize4 + 2 * 7, wallThickness / 2 ])
+			rotate([ 0, 180, 0 ])
+			linear_extrude(wallThickness * 2)
+			    text(text = "Z", font = textFont, size = textSize4, valign = "center", halign = "left");
+
+// Y arrow
+			color("red") translate([ boxX - wallThickness / 2, 5, 5])
+			rotate([ 0, 90, 0 ])
+			linear_extrude(wallThickness * 2)
+			    text(text = "Y <-----", font = textFont, size = textSize4, valign = "center", halign = "right");
 
 			// button text
 			for (i = [-8.255 * 2:8.255:8.255 * 2])
@@ -248,10 +279,8 @@ module drawLid()
 				{
 					color("red")
 					    cylinder(h = lidPostZ + wallThickness * 3, d = lidScrewHoleDia, center = true, $fn = roundness);
-					color("red")
-					translate([0, 0, wallThickness * 1.5])
-					    cylinder(h = lidPostZ + wallThickness, d = lidScrewHeadDia, center = true, $fn = roundness);
-
+					color("red") translate([ 0, 0, wallThickness * 1.5 ])
+					cylinder(h = lidPostZ + wallThickness, d = lidScrewHeadDia, center = true, $fn = roundness);
 				}
 			}
 		}
