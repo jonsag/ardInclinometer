@@ -2,6 +2,8 @@
 
 An inclinometer built around MPU-6050 and ATmega MCUs  
 
+Works on Arduino UNO, not working on barebone MCUs yet.
+
 ## Install latest avrdude from git repository
 
 Install prerequisites  

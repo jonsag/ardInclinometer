@@ -111,3 +111,35 @@ An unprogrammed 328P with stock fuses
 Fuses OK (E:FD, H:DA, L:E2)  
 Fuses OK (E:FD, H:D6, L:E2)  
 Fuses OK (E:FD, H:D6, L:F7)  
+
+## ATmega328 fuses
+
+stock/empty ATmega328
+
+    Signature = 0x1E 0x95 0x14 
+    Processor = ATmega328
+    Flash memory size = 32768 bytes.
+    LFuse = 0xE2 
+    HFuse = 0xDB 
+    EFuse = 0xFF 
+    Lock byte = 0xFF 
+    Clock calibration = 0xA8 
+    Bootloader in use: No
+    EEPROM preserved through erase: No
+    Watchdog timer always on: No
+    Bootloader is 2048 bytes starting at 7800
+
+with bootloader from arduino ide
+
+    Signature = 0x1E 0x95 0x14 
+    Processor = ATmega328
+    Flash memory size = 32768 bytes.
+    LFuse = 0xF7 
+    HFuse = 0xD6 
+    EFuse = 0xFD 
+    Lock byte = 0xFF 
+    Clock calibration = 0xA8 
+    Bootloader in use: Yes
+    EEPROM preserved through erase: Yes
+    Watchdog timer always on: No
+    Bootloader is 512 bytes starting at 7E00
