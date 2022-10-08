@@ -1,12 +1,12 @@
 // config.scad, configuration for ardInclinometer-ATmega328-casing.scad
 
-print = false;
+print = true;
 
 showBoard = true;
 
 showBox = true;
-showButtonRods = true;
-showLid = true;
+showButtonRods = false;
+showLid = false;
 
 // PCB size in mm
 pcbX = 66.675;

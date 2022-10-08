@@ -179,8 +179,8 @@ module drawBox()
 			linear_extrude(wallThickness * 2)
 			    text(text = "Z", font = textFont, size = textSize4, valign = "center", halign = "left");
 
-// Y arrow
-			color("red") translate([ boxX - wallThickness / 2, 5, 5])
+			// Y arrow
+			color("red") translate([ boxX - wallThickness / 2, 5, 5 ])
 			rotate([ 0, 90, 0 ])
 			linear_extrude(wallThickness * 2)
 			    text(text = "Y <-----", font = textFont, size = textSize4, valign = "center", halign = "right");
@@ -199,7 +199,7 @@ module drawBox()
 				    else*/
 				    if (i == -8.255)
 				{
-					text(text = "ALL", font = textFont, size = textSize3, valign = "center", halign = "right");
+					text(text = "ALL", font = textFont, size = textSize2, valign = "center", halign = "right");
 				}
 				else if (i == 0)
 				{
