@@ -1,17 +1,34 @@
 String programName = "ardInclinometer";
-String date = "20200613";
+String date = "20221009";
 String author = "Jon Sagebrand";
 String email = "jonsagebrand@gmail.com";
 
 /*******************************
   Serial
 *******************************/
-const int serialSpeed = 9600;
+#define serialSpeed 9600
 
 /*******************************
   Debugging
 *******************************/
-const boolean debug = true;
+#define DEBUG 0 // debugMess is off when 0
+#define INFO 1
+
+#if DEBUG
+#define debugMess(x) Serial.print(x)
+#define debugMessln(x) Serial.println(x)
+#else
+#define debugMess(x)
+#define debugMessln(x)
+#endif
+
+#if INFO || DEBUG
+#define infoMess(x) Serial.print(x)
+#define infoMessln(x) Serial.println(x)
+#else
+#define infoMess(x)
+#define infoMessln(x)
+#endif
 
 /*******************************
   Mire
@@ -78,11 +95,17 @@ FTDebouncer pinDebouncer(debounceTime);
 /*******************************
   In- and outputs
 *******************************/
-int levelLED_neg1 = 9; // Level LEDs
-int levelLED_neg0 = 10;
-int levelLED_level = 11; // at zero
-int levelLED_pos0 = 12;
-int levelLED_pos1 = 13;
+#define lockXButton 2
+#define lockYButton 3
+#define lockZButton 4
+#define lockAllButton 5
+#define button5 6
+
+#define levelLED_neg1 9 // Level LEDs
+#define levelLED_neg0 10
+#define levelLED_level 11 // at zero
+#define levelLED_pos0 12
+#define levelLED_pos1 13
 
 /*******************************
   Misc
@@ -93,4 +116,4 @@ String mess = ""; // holds the message
 String oldMess = "";
 
 double messMillis;
-const int messTime = 2000; // how long to show a message, ms
+#define messTime 2000 // how long to show a message, ms

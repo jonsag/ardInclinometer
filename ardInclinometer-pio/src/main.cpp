@@ -30,21 +30,11 @@ void setup()
   /*******************************
     Start serial
   *******************************/
-  if (debug)
+  if (DEBUG || INFO)
   {
     oled.println("Starting serial ...");
 
     Serial.begin(serialSpeed);
-
-    /*******************************
-      Print start information
-    *******************************/
-    Serial.println(programName); // print information
-    Serial.println(date);
-    Serial.print("by ");
-    Serial.println(author);
-    Serial.println(email);
-    Serial.println();
   }
   else
   {
@@ -52,43 +42,41 @@ void setup()
   }
 
   /*******************************
+    Print start information
+  *******************************/
+  infoMessln(programName); // print information
+  infoMessln(date);
+  infoMess("by ");
+  infoMessln(author);
+  infoMessln(email);
+  infoMessln();
+
+  /*******************************
     MPU
   *******************************/
   oled.println("Starting MPU ...");
 
-  if (debug)
-  {
-    Serial.println("=====================================");
-    Serial.println("Starting MPU ...");
-  }
+  infoMessln("=====================================");
+  infoMessln("Starting MPU ...");
 
   mpu6050.begin();
 
   oled.println("Calibrating ...");
 
-  if (debug)
-  {
-    Serial.println("Starting calibration ...");
-  }
+  infoMessln("Starting calibration ...");
 
   mpu6050.calcGyroOffsets(true);
 
   oled.println("Calibrating ...");
 
-  if (debug)
-  {
-    Serial.println();
-  }
+  infoMessln();
 
   /*******************************
     In- and outputs
   *******************************/
   oled.println("Starting in-, outputs ...");
 
-  if (debug)
-  {
-    Serial.println("Starting in-, outputs ...");
-  }
+  infoMessln("Starting in-, outputs ...");
 
   pinMode(levelLED_neg1, OUTPUT); // set level LEDs as outputs
   pinMode(levelLED_neg0, OUTPUT);
@@ -101,26 +89,20 @@ void setup()
   *******************************/
   oled.print("Start debouncer ...");
 
-  if (debug)
-  {
-    Serial.println("Starting debouncer ...");
-  }
+  infoMessln("Starting debouncer ...");
 
-  pinDebouncer.addPin(2, LOW, onPinActivated, onPinDeactivated); // pin has external pull-down resistor
-  pinDebouncer.addPin(3, LOW, onPinActivated, onPinDeactivated);
-  pinDebouncer.addPin(4, LOW, onPinActivated, onPinDeactivated);
-  pinDebouncer.addPin(5, LOW, onPinActivated, onPinDeactivated);
-  pinDebouncer.addPin(6, LOW, onPinActivated, onPinDeactivated);
+  pinDebouncer.addPin(lockXButton, LOW, onPinActivated, onPinDeactivated); // pin has external pull-down resistor
+  pinDebouncer.addPin(lockYButton, LOW, onPinActivated, onPinDeactivated);
+  pinDebouncer.addPin(lockZButton, LOW, onPinActivated, onPinDeactivated);
+  pinDebouncer.addPin(lockAllButton, LOW, onPinActivated, onPinDeactivated);
+  pinDebouncer.addPin(button5, LOW, onPinActivated, onPinDeactivated);
 
   pinDebouncer.begin();
 
   oled.clear();
 
-  if (debug)
-  {
-    Serial.println("Started!");
-    Serial.println();
-  }
+  infoMessln("Started!");
+  infoMessln();
 
   startMillis = millis();
 }
@@ -178,20 +160,17 @@ void loop()
     startMillis = millis();
   }
 
-  if (false)
-  {
-    Serial.print("\tAngles, X: ");
-    Serial.print(angleX);
-    Serial.print("\tY: ");
-    Serial.print(angleY);
-    Serial.print("\tZ: ");
-    Serial.print(angleZ);
+  debugMess("\tAngles, X: ");
+  debugMess(angleX);
+  debugMess("\tY: ");
+  debugMess(angleY);
+  debugMess("\tZ: ");
+  debugMess(angleZ);
 
-    Serial.print("\t");
-    Serial.print(values);
-    Serial.print(" values");
-    Serial.println();
-  }
+  debugMess("\t");
+  debugMess(values);
+  debugMess(" values");
+  debugMess();
 
   /*******************************
     Messages

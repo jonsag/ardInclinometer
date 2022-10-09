@@ -2,12 +2,9 @@
 
 void onPinActivated(int pinNr)
 {
-  if (debug)
-  {
-    Serial.println();
-    Serial.print("Pin activated: ");
-    Serial.println(pinNr);
-  }
+  infoMessln();
+  infoMess("Pin activated: ");
+  infoMessln(pinNr);
 
   switch (pinNr)
   {

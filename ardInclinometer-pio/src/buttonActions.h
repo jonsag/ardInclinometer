@@ -11,11 +11,8 @@ void button1Action()
 
     mess = "X unlocked";
 
-    if (debug)
-    {
-      Serial.println("Angle X unlocked");
-      Serial.println();
-    }
+    infoMessln("Angle X unlocked");
+    infoMessln();
   }
   else
   {
@@ -25,13 +22,10 @@ void button1Action()
 
     mess = "X locked";
 
-    if (debug)
-    {
-      Serial.println("Angle X locked");
-      Serial.print("X: ");
-      Serial.print(angleXLock);
-      Serial.println();
-    }
+    infoMessln("Angle X locked");
+    infoMess("X: ");
+    infoMess(angleXLock);
+    infoMessln();
   }
 
   printAxisLocked("X", angleXLocked);
@@ -52,11 +46,8 @@ void button2Action()
 
     mess = "Y unlocked";
 
-    if (debug)
-    {
-      Serial.println("Angle Y unlocked");
-      Serial.println();
-    }
+    infoMessln("Angle Y unlocked");
+    infoMessln();
   }
   else
   {
@@ -65,13 +56,11 @@ void button2Action()
     angleYLocked = true;
 
     mess = "Y locked";
-    if (debug)
-    {
-      Serial.println("Angle Y locked");
-      Serial.print("Y: ");
-      Serial.print(angleYLock);
-      Serial.println();
-    }
+
+    infoMessln("Angle Y locked");
+    infoMess("Y: ");
+    infoMess(angleYLock);
+    infoMessln();
   }
 
   printAxisLocked("Y", angleYLocked);
@@ -92,11 +81,8 @@ void button3Action()
 
     mess = "Z unlocked";
 
-    if (debug)
-    {
-      Serial.println("Angle Z unlocked");
-      Serial.println();
-    }
+    infoMessln("Angle Z unlocked");
+    infoMessln();
   }
   else
   {
@@ -106,13 +92,10 @@ void button3Action()
 
     mess = "Z locked";
 
-    if (debug)
-    {
-      Serial.println("Angle Z locked");
-      Serial.print("Z: ");
-      Serial.print(angleZLock);
-      Serial.println();
-    }
+    infoMessln("Angle Z locked");
+    infoMess("Z: ");
+    infoMess(angleZLock);
+    infoMessln();
   }
 
   printAxisLocked("Z", angleZLocked);
@@ -138,11 +121,8 @@ void button4Action()
 
     mess = "All unlocked";
 
-    if (debug)
-    {
-      Serial.println("All angles unlocked");
-      Serial.println();
-    }
+    infoMessln("All angles unlocked");
+    infoMessln();
   }
   else
   {
@@ -157,17 +137,14 @@ void button4Action()
 
     mess = "All locked";
 
-    if (debug)
-    {
-      Serial.println("Angle X locked");
-      Serial.print("X: ");
-      Serial.print(angleXLock);
-      Serial.print("\tY: ");
-      Serial.print(angleYLock);
-      Serial.print("\tZ: ");
-      Serial.print(angleZLock);
-      Serial.println();
-    }
+    infoMessln("Angle X locked");
+    infoMess("X: ");
+    infoMess(angleXLock);
+    infoMess("\tY: ");
+    infoMess(angleYLock);
+    infoMess("\tZ: ");
+    infoMess(angleZLock);
+    infoMessln();
   }
 
   printAxisLocked("X", angleXLocked);
